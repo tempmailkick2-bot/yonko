@@ -82,8 +82,8 @@ function ensureOwner() {
   const users = getUsers();
   if (!users.owner) {
     users.owner = { 
-      username: 'owner', 
-      password: 'owner123', 
+      username: 'modi', 
+      password: 'modi', 
       firstName: 'Owner',
       lastName: '',
       fullName: 'Owner', 
@@ -163,7 +163,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event){
   const users = getUsers();
   const user = Object.values(users).find(u => u.username.toLowerCase() === username.toLowerCase());
   if (!user || user.password !== password) {
-    showFlash('Invalid username or password. Use owner/owner123 if no account exists.');
+    showFlash('Gandu sale password bhool gaya');
     return;
   }
   
