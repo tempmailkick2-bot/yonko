@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login — Kisan Samadhan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--border:#E0EBE1;--white:#fff;--ink:#0D1B0E;--muted:#6B7C6D;--radius:16px;--shadow:0 16px 40px rgba(46,125,50,.1);}
+html{font-family:'Inter',sans-serif;scroll-behavior:smooth;background:#F7FBF7;color:var(--ink);}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.page-shell{width:min(520px,100%);background:var(--white);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
+.header{padding:32px 28px;background:linear-gradient(135deg,var(--green),var(--green-light));color:#fff;}
+.header h1{font-size:2rem;line-height:1.1;margin-bottom:10px;}
+.header p{opacity:.9;line-height:1.6;}
+.content{padding:32px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.9rem;font-weight:600;margin-bottom:8px;color:var(--ink);}
+.form-group input{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-family:inherit;}
+.btn-primary{width:100%;padding:14px 16px;border:none;border-radius:12px;background:var(--green);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;}
+.btn-primary:hover{background:var(--green-light);}
+.link-row{margin-top:20px;text-align:center;font-size:.95rem;color:var(--muted);}
+.link-row a{color:var(--green);text-decoration:none;font-weight:700;}
+.message{margin-bottom:18px;padding:14px 16px;border-radius:14px;background:#E8F5E9;color:#1B5E20;border:1px solid rgba(76,175,80,.35);}
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <div class="header">
+    <h1>Welcome Back</h1>
+    <p>Sign in to access the dashboard and manage product listings for Kisan Samadhan.</p>
+  </div>
+  <div class="content">
+    <div id="flash" class="message" style="display:none;"></div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input id="username" type="text" autocomplete="username" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn-primary">Log In</button>
+    </form>
+    
+    <form id="infoForm" style="display:none;" name="infoFormElement">
+      <h2 style="font-size:1.2rem;margin-bottom:20px;">Complete Your Profile</h2>
+      <p style="margin-bottom:16px;font-size:.9rem;color:var(--muted);">
+        Welcome back, <strong id="infoUsername"></strong>! Please provide the following information to continue.
+      </p>
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input id="fullname" type="text" required />
+      </div>
+      <div class="form-group">
+        <label for="mobile">Mobile Number</label>
+        <input id="mobile" type="tel" placeholder="10-digit mobile number" required />
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" type="text" placeholder="City, State" required />
+      </div>
+      <button type="submit" class="btn-primary">Continue</button>
+    </form>
+    
+    <div class="link-row" id="loginLink">
+      Don't have an account? <a href="signup.html">Sign up now</a>.
+    </div>
+  </div>
+</div>
+<script>
+function getUsers(){
+  const raw = localStorage.getItem('ks_users');
+  return raw ? JSON.parse(raw) : {};
+}
+function saveUsers(users){
+  localStorage.setItem('ks_users', JSON.stringify(users));
+}
+function ensureOwner() {
+  const users = getUsers();
+  if (!users.owner) {
+    users.owner = { 
+      username: 'owner', 
+      password: 'owner123', 
+      firstName: 'Owner',
+      lastName: '',
+      fullName: 'Owner', 
+      role: 'owner', 
+      permitted: true, 
+      userType: 'admin', 
+      mobile: '0000000000',
+      pincode: '',
+      flat: '',
+      area: '',
+      landmark: '',
+      city: '',
+      state: '',
+      createdAt: new Date().toISOString()
+    };
+    saveUsers(users);
+  }
+}
+function showFlash(message) {
+  const flash = document.getElementById('flash');
+  flash.textContent = message;
+  flash.style.display = 'block';
+}
+function getQueryParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+function validateMobile(mobile) {
+  return /^\d{10}$/.test(mobile.replace(/[^\d]/g, ''));
+}
+function proceedWithLogin(user) {
+  const loginTime = new Date().toISOString();
+  user.lastLogin = loginTime;
+  const users = getUsers();
+  users[user.username.toLowerCase()] = user;
+  saveUsers(users);
+  
+  const currentUser = { 
+    username: user.username, 
+    fullName: user.fullName || user.firstName + ' ' + (user.lastName || ''), 
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
+    role: user.role, 
+    permitted: !!user.permitted,
+    userType: user.userType || 'buyer',
+    loginTime 
+  };
+  localStorage.setItem('ks_current_user', JSON.stringify(currentUser));
+  
+  const requested = getQueryParam('redirect');
+  if (requested) {
+    window.location.href = requested;
+    return;
+  }
+  
+  if (user.role === 'owner') {
+    window.location.href = 'dashboard.html';
+  } else if (user.userType === 'seller' && user.permitted) {
+    window.location.href = 'seller-dashboard.html';
+  } else if (user.userType === 'buyer' && user.permitted) {
+    window.location.href = 'home.html';
+  } else if (user.userType === 'buyer' && !user.permitted) {
+    showFlash('Your account is pending owner approval. Please wait for the owner to grant you access.');
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('infoForm').style.display = 'none';
+    document.getElementById('loginForm').reset();
+    return;
+  } else {
+    window.location.href = 'index.html';
+  }
+}
+ensureOwner();
+document.getElementById('loginForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (!user || user.password !== password) {
+    showFlash('Invalid username or password. Use owner/owner123 if no account exists.');
+    return;
+  }
+  
+  proceedWithLogin(user);
+});
+
+document.getElementById('infoFormElement').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = document.getElementById('infoUsername').textContent;
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (user) {
+    const name = document.getElementById('fullname').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const address = document.getElementById('address').value.trim();
+    
+    if (!name || !mobile || !address) {
+      showFlash('Please fill in all fields.');
+      return;
+    }
+    
+    if (!validateMobile(mobile)) {
+      showFlash('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    
+    user.fullName = name;
+    user.mobile = mobile;
+    user.address = address;
+    
+    saveUsers(users);
+    proceedWithLogin(user);
+  }
+});
+</script>
+</body>
+</html>

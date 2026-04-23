@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kisan Samadhan Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--green-pale:#E8F5E9;--ink:#0D1B0E;--ink-2:#2C3E2D;--muted:#6B7C6D;--border:#E0EBE1;--white:#FFFFFF;--off-white:#FAFAF9;--bg:#F9F9F9;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+@keyframes overlayFadeIn{from{opacity:0;}to{opacity:1;}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:72px;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);}
+.nav-logo-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;}
+.nav-logo-text{font-weight:700;font-size:1rem;}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+.btn-ghost{padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:.85rem;font-weight:600;color:var(--ink);cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.btn-primary{padding:8px 18px;border-radius:8px;border:none;background:var(--green);font-size:.85rem;font-weight:600;color:#fff;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:0 4px 14px rgba(76,175,80,.25);}
+.container{max-width:1200px;margin:0 auto;padding:0 5%;}
+.hero{padding:120px 5% 60px;background:linear-gradient(135deg,var(--green-pale),#E8F5E9);margin-bottom:60px;}
+.hero-content{max-width:600px;}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:12px;color:var(--ink);line-height:1.2;animation:slideUp .6s ease-out;}
+.hero p{font-size:1.05rem;color:var(--muted);line-height:1.7;margin-bottom:20px;animation:slideUp .7s ease-out;}
+.filter-section{padding:40px 5%;background:var(--white);border-bottom:1px solid var(--border);}
+.filter-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.filter-header h3{font-size:1.1rem;font-weight:700;color:var(--ink);}
+.filter-tags{display:flex;gap:10px;flex-wrap:wrap;}
+.tag-btn{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-size:.85rem;font-weight:600;color:var(--ink);cursor:pointer;transition:all .2s;animation:fadeIn .3s ease-out;}
+.tag-btn:hover,.tag-btn.active{background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-2px);}
+.products-section{padding:60px 5%;max-width:1200px;margin:0 auto;}
+.section-header{margin-bottom:40px;animation:slideUp .5s ease-out;}
+.section-header h2{font-size:1.8rem;font-weight:800;margin-bottom:8px;color:var(--ink);}
+.section-header p{font-size:.95rem;color:var(--muted);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;animation:fadeIn .6s ease-out;}
+.product-card{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden;transition:all .3s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;animation:fadeIn .5s ease-out;}
+.product-card:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(46,125,50,.15);border-color:var(--green);}
+.product-image-wrapper{position:relative;width:100%;height:200px;background:linear-gradient(135deg,var(--green-pale),#C8E6C9);overflow:hidden;}
+.product-image{width:100%;height:100%;object-fit:cover;transition:transform .4s ease-out;}
+.product-card:hover .product-image{transform:scale(1.08);}
+.product-badge{position:absolute;top:12px;right:12px;background:var(--green);color:#fff;padding:6px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.product-content{padding:16px;}
+.product-name{font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;}
+.product-category{font-size:.75rem;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.product-price{font-size:1.25rem;font-weight:800;color:var(--green);margin-bottom:12px;}
+.product-desc{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.btn-view{width:100%;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-view:hover{background:var(--green-light);}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px;animation:overlayFadeIn .3s ease-out;}
+.modal-overlay.open{display:flex;}
+.modal-content{background:var(--white);border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:scaleIn .4s cubic-bezier(0.34,1.56,0.64,1);}
+.modal-header{position:sticky;top:0;padding:24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--white);}
+.modal-close{background:none;border:none;font-size:28px;cursor:pointer;color:var(--muted);transition:color .2s;}
+.modal-close:hover{color:var(--ink);}
+.modal-body{padding:30px;}
+.modal-product-image{width:100%;height:300px;border-radius:12px;object-fit:cover;background:var(--green-pale);margin-bottom:24px;}
+.modal-title{font-size:1.8rem;font-weight:800;color:var(--ink);margin-bottom:12px;}
+.modal-category{font-size:.85rem;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.modal-price{font-size:1.5rem;font-weight:800;color:var(--green);margin-bottom:20px;}
+.modal-description{font-size:.95rem;color:var(--muted);line-height:1.8;margin-bottom:24px;}
+.modal-details{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;padding:16px;background:var(--bg);border-radius:10px;}
+.detail-item label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px;}
+.detail-item{font-size:.95rem;font-weight:600;color:var(--ink);}
+.modal-actions{display:flex;gap:12px;margin-top:24px;}
+.modal-actions button{flex:1;padding:14px;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-add-to-cart{background:var(--green);color:#fff;}
+.btn-add-to-cart:hover{background:var(--green-light);transform:translateY(-2px);}
+.btn-open-page{background:var(--off-white);color:var(--ink);border:1px solid var(--border);}
+.btn-open-page:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state-icon{font-size:3rem;margin-bottom:16px;}
+.empty-state-text{font-size:1.1rem;color:var(--ink);margin-bottom:8px;}
+.editor-element{position:relative;margin-bottom:15px;cursor:move;}
+.editor-element.dragging{opacity:0.5;}
+.editor-element .element-preview{position:relative;}
+.editor-element:hover .element-preview{box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.editor-canvas.drag-over{border-color:var(--green);background:#f0f9f0;}
+.element-delete{display:none;}
+.editor-element:hover .element-delete{display:block;}
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .hero h1{font-size:1.8rem;}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+  .modal-content{max-width:100%;}
+  .modal-details{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">
+    <div class="nav-logo-icon">🌾</div>
+    <span class="nav-logo-text">Kisan Samadhan</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#" onclick="filterByCategory('all');return false;">All Products</a>
+    <a href="#" onclick="filterByCategory('seeds');return false;">Seeds</a>
+    <a href="#" onclick="filterByCategory('fertilizers');return false;">Fertilizers</a>
+    <a href="#" onclick="filterByCategory('tools');return false;">Tools</a>
+  </div>
+  <div class="nav-actions" id="navActions">
+    <a class="btn-ghost" href="login.html">Log In</a>
+    <a class="btn-primary" href="signup.html">Sign Up</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>🌾 Fresh Agricultural Products</h1>
+      <p>Discover premium quality seeds, fertilizers, tools and more for your farm. Direct from trusted suppliers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <div class="container">
+    <div class="filter-header">
+      <h3>Filter by Category</h3>
+    </div>
+    <div class="filter-tags">
+      <button class="tag-btn active" onclick="filterByCategory('all')">All Products</button>
+      <button class="tag-btn" onclick="filterByCategory('seeds')">🌾 Seeds</button>
+      <button class="tag-btn" onclick="filterByCategory('fertilizers')">🧪 Fertilizers</button>
+      <button class="tag-btn" onclick="filterByCategory('pesticides')">🐛 Pesticides</button>
+      <button class="tag-btn" onclick="filterByCategory('tools')">💧 Tools</button>
+    </div>
+  </div>
+</div>
+
+<div class="products-section">
+  <div class="section-header">
+    <h2 id="sectionTitle">All Products</h2>
+    <p>Explore our collection of quality agricultural products</p>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div></div>
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <img id="modalImage" class="modal-product-image" src="" alt="" />
+      <div id="modalCategory" class="modal-category"></div>
+      <h2 id="modalTitle" class="modal-title"></h2>
+      <div id="modalPrice" class="modal-price"></div>
+      <p id="modalDescription" class="modal-description"></p>
+      <div class="modal-details">
+        <div class="detail-item">
+          <label>Category</label>
+          <div id="detailCategory"></div>
+        </div>
+        <div class="detail-item">
+          <label>Price</label>
+          <div id="detailPrice"></div>
+        </div>
+        <div class="detail-item">
+          <label>Availability</label>
+          <div>✓ In Stock</div>
+        </div>
+        <div class="detail-item">
+          <label>Delivery</label>
+          <div>3-5 Days</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-add-to-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-open-page" onclick="openProductPage()">🔗 View Full Details</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentProduct = null;
+let selectedCategory = 'all';
+
+function getCurrentUser(){
+  const raw = localStorage.getItem('ks_current_user');
+  return raw ? JSON.parse(raw) : null;
+}
+function buildNavActions(){
+  const user = getCurrentUser();
+  const actions = document.getElementById('navActions');
+  if (user) {
+    actions.innerHTML = `<a class="btn-ghost" href="index.html">Home</a><button class="btn-primary" onclick="logout()">Log Out</button>`;
+  } else {
+    actions.innerHTML = `<a class="btn-ghost" href="login.html">Log In</a><a class="btn-primary" href="signup.html">Sign Up</a>`;
+  }
+}
+function logout(){
+  localStorage.removeItem('ks_current_user');
+  window.location.href = 'login.html';
+}
+function getProducts(){
+  const raw = localStorage.getItem('ks_products');
+  return raw ? JSON.parse(raw) : [];
+}
+function ensureProducts(){
+  let products = getProducts();
+  if (!products.length) {
+    products = [
+      { id:'p1', category:'seeds', title:'Premium Wheat Seeds', price:'₹250/kg', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'High-yield wheat seeds suitable for all soil types. Premium quality certified seeds for maximum productivity.' },
+      { id:'p2', category:'fertilizers', title:'NPK Fertilizer 20-20-20', price:'₹320/bag', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Balanced fertilizer with essential nutrients for all crops. Promotes healthy growth and maximum yield.' },
+      { id:'p3', category:'pesticides', title:'Bio Pesticide Spray', price:'₹89/L', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Safe organic pesticide for pest control. Environment-friendly solution for your farm protection.' },
+      { id:'p4', category:'tools', title:'Drip Irrigation Kit', price:'₹4,200', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Complete drip irrigation system for 1 acre. Water-efficient solution for modern farming.' }
+    ];
+    localStorage.setItem('ks_products', JSON.stringify(products));
+  }
+  return products;
+}
+function getCategoryIcon(category){
+  const icons = { seeds: '🌾', fertilizers: '🧪', pesticides: '🐛', tools: '💧', other: '📦' };
+  return icons[category] || icons.other;
+}
+function filterByCategory(category){
+  selectedCategory = category;
+  const buttons = document.querySelectorAll('.tag-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  renderProducts();
+  const titles = { all: 'All Products', seeds: 'Seeds & Grains', fertilizers: 'Fertilizers', pesticides: 'Pesticides & Sprays', tools: 'Tools & Equipment' };
+  document.getElementById('sectionTitle').textContent = titles[category] || 'All Products';
+}
+function renderProducts(){
+  const products = ensureProducts();
+  const filtered = selectedCategory === 'all' ? products : products.filter(p => p.category === selectedCategory);
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = filtered.length ? filtered.map(product => `
+    <div class="product-card" onclick="openProductModal('${product.id}')">
+      <div class="product-image-wrapper">
+        <img src="${product.image}" alt="${product.title}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23E8F5E9%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2224%22%3E${getCategoryIcon(product.category)}%3C/text%3E%3C/svg%3E'" />
+        <div class="product-badge">${getCategoryIcon(product.category)}</div>
+      </div>
+      <div class="product-content">
+        <div class="product-category">${product.category}</div>
+        <div class="product-name">${product.title}</div>
+        <div class="product-price">${product.price}</div>
+        <div class="product-desc">${product.description}</div>
+        <button class="btn-view" onclick="event.stopPropagation();">View Details</button>
+      </div>
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No products in this category</div></div>';
+}
+function openProductModal(productId){
+  const products = getProducts();
+  currentProduct = products.find(p => p.id === productId);
+  if (!currentProduct) return;
+  document.getElementById('modalImage').src = currentProduct.image;
+  document.getElementById('modalCategory').textContent = `${getCategoryIcon(currentProduct.category)} ${currentProduct.category.toUpperCase()}`;
+  document.getElementById('modalTitle').textContent = currentProduct.title;
+  document.getElementById('modalPrice').textContent = currentProduct.price;
+  document.getElementById('modalDescription').textContent = currentProduct.description;
+  document.getElementById('detailCategory').textContent = currentProduct.category;
+  document.getElementById('detailPrice').textContent = currentProduct.price;
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeProductModal(){
+  document.getElementById('productModal').classList.remove('open');
+  currentProduct = null;
+  document.body.style.overflow = 'auto';
+}
+function addToCart(){
+  if (!currentProduct) return;
+  let cart = JSON.parse(localStorage.getItem('ks_cart') || '[]');
+  const existing = cart.find(item => item.id === currentProduct.id);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ ...currentProduct, quantity: 1 });
+  }
+  localStorage.setItem('ks_cart', JSON.stringify(cart));
+  alert(`${currentProduct.title} added to cart!`);
+  closeProductModal();
+}
+function openProductPage(){
+  if (!currentProduct) return;
+  window.open(`product.html?id=${currentProduct.id}`, '_blank');
+}
+document.getElementById('productModal').addEventListener('click', function(e){
+  if (e.target === this) closeProductModal();
+});
+window.addEventListener('load', function(){
+  buildNavActions();
+  ensureProducts();
+  renderProducts();
+});
+</script>
+</body>
+</html>

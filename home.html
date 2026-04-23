@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kisan Samadhan - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--green-pale:#E8F5E9;--ink:#0D1B0E;--ink-2:#2C3E2D;--muted:#6B7C6D;--border:#E0EBE1;--white:#FFFFFF;--off-white:#FAFAF9;--bg:#F9F9F9;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+@keyframes overlayFadeIn{from{opacity:0;}to{opacity:1;}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:72px;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);}
+.nav-logo-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;}
+.nav-logo-text{font-weight:700;font-size:1rem;}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{font-size:.9rem;font-weight:500;color:var(--ink-2);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+.btn-ghost{padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:.85rem;font-weight:600;color:var(--ink);cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.btn-primary{padding:8px 18px;border-radius:8px;border:none;background:var(--green);font-size:.85rem;font-weight:600;color:#fff;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:0 4px 14px rgba(76,175,80,.25);}
+.container{max-width:1200px;margin:0 auto;padding:0 5%;}
+.hero{padding:120px 5% 60px;background:linear-gradient(135deg,var(--green-pale),#E8F5E9);margin-bottom:60px;}
+.hero-content{max-width:600px;}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:12px;color:var(--ink);line-height:1.2;animation:slideUp .6s ease-out;}
+.hero p{font-size:1.05rem;color:var(--muted);line-height:1.7;margin-bottom:20px;animation:slideUp .7s ease-out;}
+.search-section{padding:40px 5%;background:var(--white);border-bottom:1px solid var(--border);}
+.search-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:end;}
+.search-input-group{display:flex;gap:10px;}
+.search-input{flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:10px;font-size:1rem;font-family:inherit;}
+.search-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(76,175,80,.1);}
+.search-btn{padding:12px 24px;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.search-btn:hover{background:var(--green-light);}
+.filter-container{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.filter-select{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;}
+.filter-select:focus{outline:none;border-color:var(--green);}
+.filter-section{padding:40px 5%;background:var(--white);border-bottom:1px solid var(--border);}
+.filter-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.filter-header h3{font-size:1.1rem;font-weight:700;color:var(--ink);}
+.filter-tags{display:flex;gap:10px;flex-wrap:wrap;}
+.tag-btn{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-size:.85rem;font-weight:600;color:var(--ink);cursor:pointer;transition:all .2s;animation:fadeIn .3s ease-out;}
+.tag-btn:hover,.tag-btn.active{background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-2px);}
+.products-section{padding:60px 5%;max-width:1200px;margin:0 auto;}
+.section-header{margin-bottom:40px;animation:slideUp .5s ease-out;display:flex;justify-content:space-between;align-items:center;}
+.section-header h2{font-size:1.8rem;font-weight:800;margin-bottom:8px;color:var(--ink);}
+.section-header p{font-size:.95rem;color:var(--muted);}
+.result-count{font-size:.9rem;color:var(--muted);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;animation:fadeIn .6s ease-out;}
+.product-card{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden;transition:all .3s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;animation:fadeIn .5s ease-out;}
+.product-card:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(46,125,50,.15);border-color:var(--green);}
+.product-image-wrapper{position:relative;width:100%;height:200px;background:linear-gradient(135deg,var(--green-pale),#C8E6C9);overflow:hidden;}
+.product-image{width:100%;height:100%;object-fit:cover;transition:transform .4s ease-out;}
+.product-card:hover .product-image{transform:scale(1.08);}
+.product-badge{position:absolute;top:12px;right:12px;background:var(--green);color:#fff;padding:6px 12px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.product-content{padding:16px;}
+.product-name{font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;}
+.product-category{font-size:.75rem;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.product-price{font-size:1.25rem;font-weight:800;color:var(--green);margin-bottom:12px;}
+.product-desc{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.product-distance{font-size:.8rem;color:var(--muted);margin-bottom:12px;}
+.btn-view{width:100%;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-view:hover{background:var(--green-light);}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:20px;animation:overlayFadeIn .3s ease-out;}
+.modal-overlay.open{display:flex;}
+.modal-content{background:var(--white);border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:scaleIn .4s cubic-bezier(0.34,1.56,0.64,1);}
+.modal-header{position:sticky;top:0;padding:24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--white);}
+.modal-close{background:none;border:none;font-size:28px;cursor:pointer;color:var(--muted);transition:color .2s;}
+.modal-close:hover{color:var(--ink);}
+.modal-body{padding:30px;}
+.modal-product-image{width:100%;height:300px;border-radius:12px;object-fit:cover;background:var(--green-pale);margin-bottom:24px;}
+.modal-title{font-size:1.8rem;font-weight:800;color:var(--ink);margin-bottom:12px;}
+.modal-category{font-size:.85rem;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.modal-price{font-size:1.5rem;font-weight:800;color:var(--green);margin-bottom:20px;}
+.modal-description{font-size:.95rem;color:var(--muted);line-height:1.8;margin-bottom:24px;}
+.modal-details{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;padding:16px;background:var(--bg);border-radius:10px;}
+.detail-item label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px;}
+.detail-item{font-size:.95rem;font-weight:600;color:var(--ink);}
+.modal-actions{display:flex;gap:12px;margin-top:24px;}
+.modal-actions button{flex:1;padding:14px;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-add-to-cart{background:var(--green);color:#fff;}
+.btn-add-to-cart:hover{background:var(--green-light);transform:translateY(-2px);}
+.btn-open-page{background:var(--off-white);color:var(--ink);border:1px solid var(--border);}
+.btn-open-page:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state-icon{font-size:3rem;margin-bottom:16px;}
+.empty-state-text{font-size:1.1rem;color:var(--ink);margin-bottom:8px;}
+.user-menu{position:relative;}
+.user-btn{padding:8px 16px;background:transparent;border:1.5px solid var(--border);border-radius:8px;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.user-menu-dropdown{display:none;position:absolute;top:40px;right:0;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:1000;}
+.user-menu-dropdown.open{display:block;}
+.user-menu-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;color:var(--ink);display:block;transition:background .2s;}
+.user-menu-item:last-child{border-bottom:none;}
+.user-menu-item:hover{background:var(--green-pale);}
+.hero-banner{position:relative;width:100%;height:400px;margin-top:72px;margin-bottom:60px;overflow:hidden;border-radius:0;}
+.hero-carousel{position:relative;width:100%;height:100%;background:linear-gradient(135deg,var(--green-pale),#C8E6C9);}
+.hero-image{width:100%;height:100%;object-fit:cover;transition:opacity .5s ease-out;}
+.hero-carousel-controls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:20px;z-index:10;}
+.carousel-btn{background:rgba(255,255,255,.8);border:none;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.carousel-btn:hover{background:rgba(255,255,255,1);transform:scale(1.1);}
+.carousel-dots{display:flex;gap:8px;}
+.carousel-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;}
+.carousel-dot.active{background:#fff;width:24px;border-radius:5px;}
+.hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);}
+.hero-content{text-align:center;color:#fff;max-width:600px;z-index:5;position:relative;}
+.hero-content h1{font-size:2.5rem;font-weight:800;margin-bottom:12px;text-shadow:2px 2px 4px rgba(0,0,0,.3);}
+.hero-content p{font-size:1.1rem;line-height:1.6;text-shadow:1px 1px 2px rgba(0,0,0,.2);}
+.hero-cta-btn{padding:14px 32px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(46,125,50,.4);}
+.hero-cta-btn:hover{background:var(--green-light);transform:translateY(-2px);box-shadow:0 6px 20px rgba(46,125,50,.5);}
+.hero-edit-btn{position:absolute;top:10px;right:10px;padding:8px 16px;background:rgba(255,255,255,.9);border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;z-index:20;transition:all .2s;}
+.hero-edit-btn:hover{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .hero h1{font-size:1.8rem;}
+  .search-container{grid-template-columns:1fr;}
+  .filter-container{grid-template-columns:1fr;}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+  .modal-content{max-width:100%;}
+  .modal-details{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="home.html">
+    <div class="nav-logo-icon">🌾</div>
+    <span class="nav-logo-text">Kisan Samadhan</span>
+  </a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="#" onclick="filterByCategory('all');return false;">All Products</a>
+    <a href="#" onclick="filterByCategory('seeds');return false;">Seeds</a>
+    <a href="#" onclick="filterByCategory('fertilizers');return false;">Fertilizers</a>
+    <a href="#" onclick="filterByCategory('tools');return false;">Tools</a>
+  </div>
+  <div class="nav-actions" id="navActions">
+    <a class="btn-ghost" href="login.html">Log In</a>
+    <a class="btn-primary" href="signup.html">Sign Up</a>
+  </div>
+</nav>
+
+<div class="hero-banner" id="heroBanner">
+  <div class="hero-carousel">
+    <img id="heroImage" class="hero-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'%3E%3Crect fill='%23E8F5E9' width='1200' height='400'/%3E%3Ctext x='50%' y='50%' font-size='48' fill='%232E7D32' text-anchor='middle' dominant-baseline='middle' font-family='Arial'%3E🌾 Welcome to Kisan Samadhan%3C/text%3E%3C/svg%3E" alt="Hero Banner" />
+    <div class="hero-carousel-controls">
+      <button class="carousel-btn" onclick="previousHeroSlide()">❮</button>
+      <div class="carousel-dots" id="heroDots"></div>
+      <button class="carousel-btn" onclick="nextHeroSlide()">❯</button>
+    </div>
+  </div>
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1 id="heroTitle">Fresh Agricultural Products</h1>
+      <p id="heroMessage">Discover premium quality seeds, fertilizers, tools and more for your farm. Direct from trusted suppliers.</p>
+      <button class="hero-cta-btn" id="heroCtaBtn" style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);">Shop Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Banner Edit Modal (Owner Only) -->
+<div id="heroBannerModal" class="modal-overlay">
+  <div class="modal-content" style="max-width:800px;">
+    <div class="modal-header">
+      <h2>🎨 Edit Hero Banner</h2>
+      <button class="modal-close" onclick="closeHeroBannerModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="heroTitle">Banner Title</label>
+        <input id="heroTitleInput" type="text" placeholder="Enter banner title" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;" />
+      </div>
+      <div class="form-group">
+        <label for="heroMessage">Banner Message</label>
+        <textarea id="heroMessageInput" placeholder="Enter banner message" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Banner Images (Max 5)</label>
+        <input id="heroImageUpload" type="file" accept="image/*" multiple style="display:block;margin-bottom:10px;" />
+        <div id="heroImagePreview" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;"></div>
+      </div>
+      <div class="form-group">
+        <label for="heroAutoSwitch">Auto-Switch Interval (seconds)</label>
+        <input id="heroAutoSwitch" type="number" min="1" max="60" value="5" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;" />
+      </div>
+      <div class="form-group">
+        <label for="heroButtonText">Button Text</label>
+        <input id="heroButtonText" type="text" placeholder="e.g., Shop Now" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;" />
+      </div>
+      <div class="form-group">
+        <label>Button Position</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div>
+            <label>Bottom (px)</label>
+            <input id="heroButtonBottom" type="number" value="40" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;" />
+          </div>
+          <div>
+            <label>Left Offset (%)</label>
+            <input id="heroButtonLeft" type="number" value="50" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;" />
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:24px;">
+        <button class="btn-primary" onclick="saveHeroBanner()" style="flex:1;padding:12px;border:none;border-radius:8px;background:var(--green);color:#fff;font-weight:600;cursor:pointer;">Save Banner</button>
+        <button class="btn-ghost" onclick="closeHeroBannerModal()" style="flex:1;padding:12px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--ink);font-weight:600;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="search-section">
+  <div class="search-container">
+    <div class="search-input-group">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search products by name..." />
+      <button class="search-btn" onclick="applyFilters()">🔍 Search</button>
+    </div>
+    <div class="filter-container">
+      <select id="sortBy" class="filter-select" onchange="applyFilters()">
+        <option value="none">Sort By</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="popularity">Popularity</option>
+      </select>
+      <select id="distanceFilter" class="filter-select" onchange="applyFilters()">
+        <option value="all">Distance: All</option>
+        <option value="10">Within 10 km</option>
+        <option value="25">Within 25 km</option>
+        <option value="50">Within 50 km</option>
+        <option value="100">Within 100 km</option>
+      </select>
+      <button class="filter-select" onclick="resetFilters()" style="cursor:pointer;background:var(--green-pale);color:var(--green);border:1px solid var(--green);font-weight:600;">↻ Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <div class="container">
+    <div class="filter-header">
+      <h3>Filter by Category</h3>
+    </div>
+    <div class="filter-tags">
+      <button class="tag-btn active" onclick="filterByCategory('all')">All Products</button>
+      <button class="tag-btn" onclick="filterByCategory('seeds')">🌾 Seeds</button>
+      <button class="tag-btn" onclick="filterByCategory('fertilizers')">🧪 Fertilizers</button>
+      <button class="tag-btn" onclick="filterByCategory('pesticides')">🐛 Pesticides</button>
+      <button class="tag-btn" onclick="filterByCategory('tools')">💧 Tools</button>
+    </div>
+  </div>
+</div>
+
+<div class="products-section">
+  <div class="section-header">
+    <div>
+      <h2 id="sectionTitle">All Products</h2>
+      <p>Explore our collection of quality agricultural products</p>
+    </div>
+    <div class="result-count" id="resultCount"></div>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div></div>
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <img id="modalImage" class="modal-product-image" src="" alt="" />
+      <div id="modalCategory" class="modal-category"></div>
+      <h2 id="modalTitle" class="modal-title"></h2>
+      <div id="modalPrice" class="modal-price"></div>
+      <p id="modalDescription" class="modal-description"></p>
+      <div class="modal-details">
+        <div class="detail-item">
+          <label>Category</label>
+          <div id="detailCategory"></div>
+        </div>
+        <div class="detail-item">
+          <label>Price</label>
+          <div id="detailPrice"></div>
+        </div>
+        <div class="detail-item">
+          <label>Distance</label>
+          <div id="detailDistance"></div>
+        </div>
+        <div class="detail-item">
+          <label>Delivery</label>
+          <div>3-5 Days</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-add-to-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-open-page" onclick="openProductPage()">🔗 View Full Details</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentProduct = null;
+let selectedCategory = 'all';
+let allProducts = [];
+
+function getCurrentUser(){
+  const raw = localStorage.getItem('ks_current_user');
+  return raw ? JSON.parse(raw) : null;
+}
+function buildNavActions(){
+  const user = getCurrentUser();
+  const actions = document.getElementById('navActions');
+  if (user) {
+    actions.innerHTML = `
+      <a class="btn-ghost" href="home.html">Home</a>
+      <div class="user-menu">
+        <button class="user-btn" onclick="toggleUserMenu()">👤 ${user.username}</button>
+        <div class="user-menu-dropdown" id="userMenuDropdown">
+          <a class="user-menu-item" onclick="goToDashboard()">📊 Dashboard</a>
+          <a class="user-menu-item" onclick="logout()">🚪 Logout</a>
+        </div>
+      </div>
+    `;
+  } else {
+    actions.innerHTML = `<a class="btn-ghost" href="login.html">Log In</a><a class="btn-primary" href="signup.html">Sign Up</a>`;
+  }
+}
+function toggleUserMenu(){
+  const dropdown = document.getElementById('userMenuDropdown');
+  dropdown.classList.toggle('open');
+}
+function goToDashboard(){
+  const user = getCurrentUser();
+  if (user && user.userType === 'seller') {
+    window.location.href = 'seller-dashboard.html';
+  } else if (user && user.role === 'owner') {
+    window.location.href = 'dashboard.html';
+  }
+}
+function logout(){
+  localStorage.removeItem('ks_current_user');
+  window.location.href = 'login.html';
+}
+function getProducts(){
+  const raw = localStorage.getItem('ks_products');
+  if (!raw) {
+    ensureProducts();
+    return JSON.parse(localStorage.getItem('ks_products'));
+  }
+  return JSON.parse(raw);
+}
+function ensureProducts(){
+  let products = getProducts();
+  if (!products || !products.length) {
+    products = [
+      { id:'p1', category:'seeds', title:'Premium Wheat Seeds', price:250, priceDisplay:'₹250/kg', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'High-yield wheat seeds suitable for all soil types. Premium quality certified seeds for maximum productivity.', distance:12, popularity:95 },
+      { id:'p2', category:'fertilizers', title:'NPK Fertilizer 20-20-20', price:320, priceDisplay:'₹320/bag', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Balanced fertilizer with essential nutrients for all crops. Promotes healthy growth and maximum yield.', distance:5, popularity:88 },
+      { id:'p3', category:'pesticides', title:'Bio Pesticide Spray', price:89, priceDisplay:'₹89/L', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Safe organic pesticide for pest control. Environment-friendly solution for your farm protection.', distance:22, popularity:75 },
+      { id:'p4', category:'tools', title:'Drip Irrigation Kit', price:4200, priceDisplay:'₹4,200', image:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=500&fit=crop', description:'Complete drip irrigation system for 1 acre. Water-efficient solution for modern farming.', distance:8, popularity:92 }
+    ];
+    localStorage.setItem('ks_products', JSON.stringify(products));
+  }
+  return products;
+}
+function getCategoryIcon(category){
+  const icons = { seeds: '🌾', fertilizers: '🧪', pesticides: '🐛', tools: '💧', other: '📦' };
+  return icons[category] || icons.other;
+}
+function filterByCategory(category){
+  selectedCategory = category;
+  const buttons = document.querySelectorAll('.tag-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('sortBy').value = 'none';
+  document.getElementById('distanceFilter').value = 'all';
+  renderProducts();
+  const titles = { all: 'All Products', seeds: 'Seeds & Grains', fertilizers: 'Fertilizers', pesticides: 'Pesticides & Sprays', tools: 'Tools & Equipment' };
+  document.getElementById('sectionTitle').textContent = titles[category] || 'All Products';
+}
+function applyFilters(){
+  renderProducts();
+}
+function resetFilters(){
+  selectedCategory = 'all';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('sortBy').value = 'none';
+  document.getElementById('distanceFilter').value = 'all';
+  const buttons = document.querySelectorAll('.tag-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  buttons[0].classList.add('active');
+  renderProducts();
+  document.getElementById('sectionTitle').textContent = 'All Products';
+}
+function renderProducts(){
+  let products = ensureProducts();
+  let filtered = [...products];
+  
+  // Filter by category
+  if (selectedCategory !== 'all') {
+    filtered = filtered.filter(p => p.category === selectedCategory);
+  }
+  
+  // Filter by search
+  const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (searchTerm) {
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+  }
+  
+  // Filter by distance
+  const maxDistance = document.getElementById('distanceFilter').value;
+  if (maxDistance !== 'all') {
+    filtered = filtered.filter(p => p.distance <= parseInt(maxDistance));
+  }
+  
+  // Sort
+  const sortBy = document.getElementById('sortBy').value;
+  if (sortBy === 'price-low') {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price-high') {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (sortBy === 'popularity') {
+    filtered.sort((a, b) => b.popularity - a.popularity);
+  }
+  
+  const grid = document.getElementById('productsGrid');
+  const resultCount = document.getElementById('resultCount');
+  resultCount.textContent = `${filtered.length} result${filtered.length !== 1 ? 's' : ''}`;
+  
+  grid.innerHTML = filtered.length ? filtered.map(product => `
+    <div class="product-card" onclick="openProductModal('${product.id}')">
+      <div class="product-image-wrapper">
+        <img src="${product.image}" alt="${product.title}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23E8F5E9%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2224%22%3E${getCategoryIcon(product.category)}%3C/text%3E%3C/svg%3E'" />
+        <div class="product-badge">${getCategoryIcon(product.category)}</div>
+      </div>
+      <div class="product-content">
+        <div class="product-category">${product.category}</div>
+        <div class="product-name">${product.title}</div>
+        <div class="product-price">${product.priceDisplay}</div>
+        <div class="product-distance">📍 ${product.distance} km away</div>
+        <div class="product-desc">${product.description}</div>
+        <button class="btn-view" onclick="event.stopPropagation();">View Details</button>
+      </div>
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No products found</div></div>';
+}
+function openProductModal(productId){
+  const products = getProducts();
+  currentProduct = products.find(p => p.id === productId);
+  if (!currentProduct) return;
+  document.getElementById('modalImage').src = currentProduct.image;
+  document.getElementById('modalCategory').textContent = `${getCategoryIcon(currentProduct.category)} ${currentProduct.category.toUpperCase()}`;
+  document.getElementById('modalTitle').textContent = currentProduct.title;
+  document.getElementById('modalPrice').textContent = currentProduct.priceDisplay;
+  document.getElementById('modalDescription').textContent = currentProduct.description;
+  document.getElementById('detailCategory').textContent = currentProduct.category;
+  document.getElementById('detailPrice').textContent = currentProduct.priceDisplay;
+  document.getElementById('detailDistance').textContent = `${currentProduct.distance} km`;
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeProductModal(){
+  document.getElementById('productModal').classList.remove('open');
+  currentProduct = null;
+  document.body.style.overflow = 'auto';
+}
+function addToCart(){
+  if (!currentProduct) return;
+  let cart = JSON.parse(localStorage.getItem('ks_cart') || '[]');
+  const existing = cart.find(item => item.id === currentProduct.id);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ ...currentProduct, quantity: 1 });
+  }
+  localStorage.setItem('ks_cart', JSON.stringify(cart));
+  alert(`${currentProduct.title} added to cart!`);
+  closeProductModal();
+}
+function openProductPage(){
+  if (!currentProduct) return;
+  window.open(`product.html?id=${currentProduct.id}`, '_blank');
+}
+document.getElementById('productModal').addEventListener('click', function(e){
+  if (e.target === this) closeProductModal();
+});
+window.addEventListener('load', function(){
+  buildNavActions();
+  ensureProducts();
+  renderProducts();
+});
+document.addEventListener('click', function(e){
+  const userMenu = document.querySelector('.user-menu');
+  if (userMenu && !userMenu.contains(e.target)) {
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  }
+});
+
+// Hero Banner Functions
+let currentHeroSlide = 0;
+let heroImages = [];
+let heroAutoSwitchTimer = null;
+let heroSettings = {
+  title: 'Fresh Agricultural Products',
+  message: 'Discover premium quality seeds, fertilizers, tools and more for your farm. Direct from trusted suppliers.',
+  images: [],
+  autoSwitchInterval: 5,
+  buttonText: 'Shop Now →',
+  buttonBottom: 40,
+  buttonLeft: 50
+};
+
+function getHeroSettings(){
+  const raw = localStorage.getItem('ks_hero_banner');
+  return raw ? JSON.parse(raw) : heroSettings;
+}
+
+function saveHeroSettings(settings){
+  localStorage.setItem('ks_hero_banner', JSON.stringify(settings));
+  heroSettings = settings;
+}
+
+function initHeroBanner(){
+  heroSettings = getHeroSettings();
+  heroImages = heroSettings.images || [];
+  currentHeroSlide = 0;
+  
+  if (heroImages.length === 0) {
+    // Default image
+    document.getElementById('heroImage').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22400%22%3E%3Crect fill=%22%23E8F5E9%22 width=%221200%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2248%22 fill=%22%232E7D32%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-family=%22Arial%22%3E🌾 Welcome to Kisan Samadhan%3C/text%3E%3C/svg%3E';
+  } else {
+    document.getElementById('heroImage').src = heroImages[0];
+  }
+  
+  document.getElementById('heroTitle').textContent = heroSettings.title;
+  document.getElementById('heroMessage').textContent = heroSettings.message;
+  document.getElementById('heroCtaBtn').textContent = heroSettings.buttonText;
+  document.getElementById('heroCtaBtn').style.bottom = heroSettings.buttonBottom + 'px';
+  document.getElementById('heroCtaBtn').style.left = heroSettings.buttonLeft + '%';
+  
+  renderHeroDots();
+  startHeroAutoSwitch();
+  
+  // Show edit button only for owner
+  const user = getCurrentUser();
+  if (user && user.userType === 'owner') {
+    const banner = document.getElementById('heroBanner');
+    const editBtn = document.createElement('button');
+    editBtn.className = 'hero-edit-btn';
+    editBtn.textContent = '✎ Edit Banner';
+    editBtn.onclick = openHeroBannerModal;
+    banner.appendChild(editBtn);
+  }
+}
+
+function renderHeroDots(){
+  const dotsContainer = document.getElementById('heroDots');
+  dotsContainer.innerHTML = '';
+  
+  for (let i = 0; i < Math.max(1, heroImages.length); i++) {
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === currentHeroSlide ? ' active' : '');
+    dot.onclick = () => goToHeroSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+}
+
+function goToHeroSlide(index){
+  if (heroImages.length === 0) return;
+  currentHeroSlide = index % heroImages.length;
+  document.getElementById('heroImage').src = heroImages[currentHeroSlide];
+  renderHeroDots();
+  resetHeroAutoSwitch();
+}
+
+function nextHeroSlide(){
+  if (heroImages.length === 0) return;
+  goToHeroSlide(currentHeroSlide + 1);
+}
+
+function previousHeroSlide(){
+  if (heroImages.length === 0) return;
+  goToHeroSlide(currentHeroSlide - 1 + heroImages.length);
+}
+
+function startHeroAutoSwitch(){
+  if (heroImages.length <= 1) return;
+  heroAutoSwitchTimer = setInterval(() => {
+    nextHeroSlide();
+  }, heroSettings.autoSwitchInterval * 1000);
+}
+
+function resetHeroAutoSwitch(){
+  if (heroAutoSwitchTimer) clearInterval(heroAutoSwitchTimer);
+  startHeroAutoSwitch();
+}
+
+function openHeroBannerModal(){
+  const user = getCurrentUser();
+  if (!user || user.userType !== 'owner') {
+    alert('Only the owner can edit the hero banner');
+    return;
+  }
+  
+  document.getElementById('heroTitleInput').value = heroSettings.title;
+  document.getElementById('heroMessageInput').value = heroSettings.message;
+  document.getElementById('heroAutoSwitch').value = heroSettings.autoSwitchInterval;
+  document.getElementById('heroButtonText').value = heroSettings.buttonText;
+  document.getElementById('heroButtonBottom').value = heroSettings.buttonBottom;
+  document.getElementById('heroButtonLeft').value = heroSettings.buttonLeft;
+  
+  // Show image previews
+  const preview = document.getElementById('heroImagePreview');
+  preview.innerHTML = '';
+  heroImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.style.position = 'relative';
+    const imgEl = document.createElement('img');
+    imgEl.src = img;
+    imgEl.style.width = '100%';
+    imgEl.style.height = '100px';
+    imgEl.style.objectFit = 'cover';
+    imgEl.style.borderRadius = '8px';
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.style.position = 'absolute';
+    deleteBtn.style.top = '5px';
+    deleteBtn.style.right = '5px';
+    deleteBtn.style.background = '#ff4444';
+    deleteBtn.style.color = '#fff';
+    deleteBtn.style.border = 'none';
+    deleteBtn.style.borderRadius = '50%';
+    deleteBtn.style.width = '24px';
+    deleteBtn.style.height = '24px';
+    deleteBtn.style.cursor = 'pointer';
+    deleteBtn.onclick = () => removeHeroImage(i);
+    div.appendChild(imgEl);
+    div.appendChild(deleteBtn);
+    preview.appendChild(div);
+  });
+  
+  document.getElementById('heroBannerModal').classList.add('open');
+}
+
+function closeHeroBannerModal(){
+  document.getElementById('heroBannerModal').classList.remove('open');
+}
+
+function removeHeroImage(index){
+  heroImages.splice(index, 1);
+  openHeroBannerModal();
+}
+
+function saveHeroBanner(){
+  const fileInput = document.getElementById('heroImageUpload');
+  const newImages = Array.from(fileInput.files || []);
+  
+  if (newImages.length > 0) {
+    // Convert new images to data URLs
+    let loaded = 0;
+    newImages.forEach((file, idx) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (heroImages.length < 5) {
+          heroImages.push(e.target.result);
+        }
+        loaded++;
+        if (loaded === newImages.length) {
+          completeHeroBannerSave();
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    completeHeroBannerSave();
+  }
+}
+
+function completeHeroBannerSave(){
+  heroSettings.title = document.getElementById('heroTitleInput').value;
+  heroSettings.message = document.getElementById('heroMessageInput').value;
+  heroSettings.autoSwitchInterval = parseInt(document.getElementById('heroAutoSwitch').value);
+  heroSettings.buttonText = document.getElementById('heroButtonText').value;
+  heroSettings.buttonBottom = parseInt(document.getElementById('heroButtonBottom').value);
+  heroSettings.buttonLeft = parseInt(document.getElementById('heroButtonLeft').value);
+  heroSettings.images = heroImages;
+  
+  saveHeroSettings(heroSettings);
+  closeHeroBannerModal();
+  initHeroBanner();
+  alert('✓ Hero banner saved successfully!');
+}
+
+window.addEventListener('load', function(){
+  buildNavActions();
+  ensureProducts();
+  renderProducts();
+  initHeroBanner();
+});
+</script>
+</body>
+</html>

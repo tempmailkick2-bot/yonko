@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign Up — Kisan Samadhan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--border:#E0EBE1;--white:#fff;--ink:#0D1B0E;--muted:#6B7C6D;--radius:16px;--shadow:0 16px 40px rgba(46,125,50,.1);}
+html{font-family:'Inter',sans-serif;scroll-behavior:smooth;background:#F7FBF7;color:var(--ink);}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.page-shell{width:min(600px,100%);background:var(--white);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);max-height:95vh;overflow-y:auto;}
+.header{padding:32px 28px;background:linear-gradient(135deg,var(--green),var(--green-light));color:#fff;}
+.header h1{font-size:2rem;line-height:1.1;margin-bottom:10px;}
+.header p{opacity:.9;line-height:1.6;}
+.content{padding:32px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.9rem;font-weight:600;margin-bottom:8px;color:var(--ink);}
+.form-group input,.form-group select{width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:12px;font-size:1rem;font-family:inherit;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(76,175,80,.1);}
+.form-group.required label::after{content:' *';color:red;font-weight:700;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-row-full{grid-column:1/-1;}
+.btn-primary{width:100%;padding:14px 16px;border:none;border-radius:12px;background:var(--green);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;}
+.btn-primary:hover{background:var(--green-light);}
+.link-row{margin-top:20px;text-align:center;font-size:.95rem;color:var(--muted);}
+.link-row a{color:var(--green);text-decoration:none;font-weight:700;}
+.message{margin-bottom:18px;padding:14px 16px;border-radius:14px;background:#E8F5E9;color:#1B5E20;border:1px solid rgba(76,175,80,.35);}
+.user-type-section{margin-bottom:24px;padding:20px;background:#F7FBF7;border-radius:12px;border:1px solid var(--border);}
+.user-type-title{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:16px;}
+.user-type-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.user-type-card{padding:16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:all .2s;background:var(--white);}
+.user-type-card:hover{border-color:var(--green);background:#E8F5E9;}
+.user-type-card.selected{border-color:var(--green);background:var(--green);color:#fff;}
+.user-type-card.selected .type-label{color:#fff;}
+.user-type-card.selected .type-desc{color:rgba(255,255,255,.9);}
+.user-type-card input{display:none;}
+.type-icon{font-size:1.8rem;margin-bottom:8px;}
+.type-label{font-size:.95rem;font-weight:700;color:var(--ink);}
+.type-desc{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.section-title{font-size:1rem;font-weight:700;color:var(--ink);margin:24px 0 16px 0;padding-bottom:12px;border-bottom:2px solid var(--border);}
+.autocomplete-hint{font-size:.8rem;color:var(--green);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <div class="header">
+    <h1>Create Your Account</h1>
+    <p>Sign up to use the site and request dashboard access from the owner.</p>
+  </div>
+  <div class="content">
+    <div id="flash" class="message" style="display:none;"></div>
+    <form id="signupForm">
+      <!-- User Type Selection -->
+      <div class="user-type-section">
+        <div class="user-type-title">What are you here for? (This cannot be changed later)</div>
+        <div class="user-type-options">
+          <label class="user-type-card" id="buyerCard">
+            <input type="radio" name="userType" value="buyer" required>
+            <div class="type-icon">🛒</div>
+            <div class="type-label">Buyer</div>
+            <div class="type-desc">Browse and purchase products</div>
+          </label>
+          <label class="user-type-card" id="sellerCard">
+            <input type="radio" name="userType" value="seller" required>
+            <div class="type-icon">🏪</div>
+            <div class="type-label">Seller</div>
+            <div class="type-desc">List and sell your products</div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Account Information -->
+      <div class="section-title">Account Information</div>
+      
+      <div class="form-row">
+        <div class="form-group required">
+          <label for="firstname">First Name</label>
+          <input id="firstname" type="text" autocomplete="given-name" required />
+        </div>
+        <div class="form-group required">
+          <label for="lastname">Last Name</label>
+          <input id="lastname" type="text" autocomplete="family-name" required />
+        </div>
+      </div>
+
+      <div class="form-group required">
+        <label for="username">Username</label>
+        <input id="username" type="text" autocomplete="username" required />
+      </div>
+
+      <div class="form-group required">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required />
+      </div>
+
+      <div class="form-group required">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="new-password" required />
+      </div>
+
+      <!-- Contact Information -->
+      <div class="section-title">Contact Information</div>
+
+      <div class="form-group required">
+        <label for="mobile">Mobile Number</label>
+        <input id="mobile" type="tel" placeholder="10-digit mobile number" inputmode="numeric" required />
+      </div>
+
+      <!-- Address Information -->
+      <div class="section-title">Address Information</div>
+
+      <div class="form-group required">
+        <label for="pincode">Pincode</label>
+        <input id="pincode" type="text" placeholder="e.g., 110001" maxlength="6" inputmode="numeric" required />
+        <div class="autocomplete-hint" id="pincodeHint" style="display:none;">ℹ️ Address fields will auto-fill based on pincode</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label for="flat">Flat/House No./Building/Company/Apartment</label>
+          <input id="flat" type="text" placeholder="e.g., Apt 202, Building A" required />
+        </div>
+        <div class="form-group required">
+          <label for="area">Area/Street/Sector/Village</label>
+          <input id="area" type="text" placeholder="e.g., Connaught Place" required />
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="landmark">Landmark (Optional)</label>
+        <input id="landmark" type="text" placeholder="e.g., Near Central Park" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label for="city">Town/City</label>
+          <input id="city" type="text" placeholder="e.g., New Delhi" required />
+        </div>
+        <div class="form-group required">
+          <label for="state">State</label>
+          <input id="state" type="text" placeholder="e.g., Delhi" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="margin-top:24px;">Sign Up</button>
+    </form>
+    <div class="link-row">
+      Already registered? <a href="login.html">Log in</a>.
+    </div>
+  </div>
+</div>
+<script>
+// Pincode Database (Indian Pincodes) - Loaded from CSV
+let pincodeDatabase = {};
+
+async function loadPincodeDatabase() {
+  try {
+    const response = await fetch('india_pincode.csv');
+    const text = await response.text();
+    const lines = text.split('\n');
+    // Skip header
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line) {
+        const [pincode, taluk, district, state] = line.split(',');
+        if (pincode && taluk && district && state) {
+          pincodeDatabase[pincode] = {
+            city: taluk,
+            state: state,
+            area: district
+          };
+        }
+      }
+    }
+    console.log('Pincode database loaded with', Object.keys(pincodeDatabase).length, 'entries');
+  } catch (error) {
+    console.error('Failed to load pincode database:', error);
+    // Fallback to some basic data if CSV fails
+    pincodeDatabase = {
+      '110001': { city: 'New Delhi', state: 'Delhi', area: 'Central Delhi' },
+      '400001': { city: 'Mumbai', state: 'Maharashtra', area: 'Mumbai' },
+      '560001': { city: 'Bangalore', state: 'Karnataka', area: 'Bangalore' }
+    };
+  }
+}
+
+// Load the database on page load
+loadPincodeDatabase();
+
+function getUsers(){
+  const raw = localStorage.getItem('ks_users');
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveUsers(users){
+  localStorage.setItem('ks_users', JSON.stringify(users));
+}
+
+function ensureOwner() {
+  const users = getUsers();
+  if (!users.owner) {
+    users.owner = { 
+      username: 'owner', 
+      password: 'owner123', 
+      firstName: 'Owner',
+      lastName: '',
+      fullName: 'Owner', 
+      role: 'owner', 
+      permitted: true, 
+      userType: 'admin', 
+      mobile: '0000000000',
+      pincode: '',
+      flat: '',
+      area: '',
+      landmark: '',
+      city: '',
+      state: ''
+    };
+    saveUsers(users);
+  }
+}
+
+function showFlash(message) {
+  const flash = document.getElementById('flash');
+  flash.textContent = message;
+  flash.style.display = 'block';
+  flash.scrollIntoView({ behavior: 'smooth' });
+}
+
+function validateMobile(mobile) {
+  return /^\d{10}$/.test(mobile.replace(/[^\d]/g, ''));
+}
+
+function validatePincode(pincode) {
+  return /^\d{6}$/.test(pincode.replace(/[^\d]/g, ''));
+}
+
+function autofillAddressFromPincode(pincode) {
+  const data = pincodeDatabase[pincode];
+  if (data) {
+    document.getElementById('city').value = data.city;
+    document.getElementById('state').value = data.state;
+    document.getElementById('pincodeHint').style.display = 'block';
+    return true;
+  } else {
+    document.getElementById('pincodeHint').style.display = 'none';
+    return false;
+  }
+}
+
+ensureOwner();
+
+// Handle user type selection
+document.querySelectorAll('input[name="userType"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const cards = document.querySelectorAll('.user-type-card');
+    cards.forEach(card => card.classList.remove('selected'));
+    if (this.checked) {
+      this.parentElement.classList.add('selected');
+    }
+  });
+});
+
+// Handle pincode auto-fill
+document.getElementById('pincode').addEventListener('blur', function() {
+  const pincode = this.value.trim();
+  if (validatePincode(pincode)) {
+    autofillAddressFromPincode(pincode);
+  }
+});
+
+document.getElementById('signupForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  
+  const userType = document.querySelector('input[name="userType"]:checked');
+  if (!userType) {
+    showFlash('Please select whether you are a Buyer or Seller.');
+    return;
+  }
+  
+  const firstName = document.getElementById('firstname').value.trim();
+  const lastName = document.getElementById('lastname').value.trim();
+  const fullName = firstName + ' ' + lastName;
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const pincode = document.getElementById('pincode').value.trim();
+  const flat = document.getElementById('flat').value.trim();
+  const area = document.getElementById('area').value.trim();
+  const landmark = document.getElementById('landmark').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const state = document.getElementById('state').value.trim();
+  
+  // Validate required fields
+  if (!firstName || !lastName || !username || !email || !password || !mobile || !pincode || !flat || !area || !city || !state) {
+    showFlash('Please fill in all required fields marked with *');
+    return;
+  }
+  
+  if (!validateMobile(mobile)) {
+    showFlash('Please enter a valid 10-digit mobile number.');
+    return;
+  }
+  
+  if (!validatePincode(pincode)) {
+    showFlash('Please enter a valid 6-digit pincode.');
+    return;
+  }
+  
+  const users = getUsers();
+  const existing = Object.values(users).find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (existing) {
+    showFlash('This username is already taken. Choose another one.');
+    return;
+  }
+  
+  const existingEmail = Object.values(users).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (existingEmail) {
+    showFlash('This email is already registered. Please log in or use a different email.');
+    return;
+  }
+  
+  const isSeller = userType.value === 'seller';
+  
+  users[username.toLowerCase()] = {
+    username,
+    email,
+    password,
+    firstName,
+    lastName,
+    fullName,
+    mobile,
+    pincode,
+    flat,
+    area,
+    landmark,
+    city,
+    state,
+    userType: userType.value,
+    role: isSeller ? 'seller' : 'normal',
+    permitted: isSeller ? true : false,
+    lastLogin: '',
+    createdAt: new Date().toISOString()
+  };
+  
+  saveUsers(users);
+  
+  if (isSeller) {
+    alert('Account created successfully! You now have access to the seller dashboard.');
+    window.location.href = 'login.html';
+  } else {
+    alert('Account created successfully! Your account is pending owner approval.');
+    window.location.href = 'login.html';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Owner Dashboard — Kisan Samadhan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--green-pale:#E8F5E9;--green-rgb:46,125,50;--ink:#0D1B0E;--ink-2:#2C3E2D;--muted:#6B7C6D;--border:#E0EBE1;--white:#FFFFFF;--off-white:#FAFAF9;--bg:#F9F9F9;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 12px rgba(46,125,50,.08);--shadow-lg:0 12px 32px rgba(46,125,50,.12);--radius:12px;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+.dashboard-wrapper{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--white);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:50;}
+.sidebar-top{padding:0 24px;margin-bottom:24px;}
+.sidebar-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);margin-bottom:32px;}
+.sidebar-logo-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;}
+.sidebar-logo-text{font-weight:700;font-size:.95rem;}
+.sidebar-nav{display:flex;flex-direction:column;gap:4px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:all .2s;cursor:pointer;border-left:3px solid transparent;}
+.nav-item:hover,.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(76,175,80,.05);}
+.nav-item-icon{font-size:1.2rem;}
+.sidebar-user{position:absolute;bottom:24px;left:24px;right:24px;padding:16px;background:var(--off-white);border-radius:10px;border:1px solid var(--border);}
+.sidebar-user-name{font-size:.85rem;font-weight:700;color:var(--ink);}
+.sidebar-user-role{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.main-content{grid-column:2;padding:32px;padding-left:40px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;}
+.top-bar-title{font-size:1.8rem;font-weight:800;color:var(--ink);}
+.top-bar-actions{display:flex;gap:12px;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:var(--shadow);}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--white);color:var(--ink);border:1.5px solid var(--border);border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.btn-small{padding:6px 12px;font-size:.8rem;font-weight:600;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .2s;}
+.stat-card:hover{border-color:var(--green);box-shadow:var(--shadow);}
+.stat-card-icon{font-size:1.8rem;margin-bottom:8px;}
+.stat-card-label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.stat-card-value{font-size:1.8rem;font-weight:800;color:var(--ink);}
+.stat-card-change{font-size:.8rem;color:var(--green);font-weight:600;margin-top:6px;}
+.content-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:40px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s;}
+.card:hover{border-color:var(--green);box-shadow:var(--shadow);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.card-header h2{font-size:1.2rem;font-weight:700;color:var(--ink);}
+.card-header-actions{display:flex;gap:8px;}
+.table-container{overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;}
+.table th{padding:12px 0;text-align:left;border-bottom:2px solid var(--border);font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.table td{padding:16px 0;border-bottom:1px solid var(--border);font-size:.9rem;}
+.table tbody tr:hover{background:var(--green-pale);}
+.table tbody tr:last-child td{border-bottom:none;}
+.tag{display:inline-flex;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.tag-owner{background:rgba(46,125,50,.15);color:var(--green);} 
+.tag-helper{background:rgba(76,175,80,.15);color:var(--green);} 
+.tag-normal{background:rgba(0,0,0,.08);color:var(--ink);} 
+.action-btn{padding:6px 12px;margin-left:8px;font-size:.8rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;transition:all .2s;}
+.action-btn-primary{background:var(--green);color:#fff;}
+.action-btn-primary:hover{background:var(--green-light);}
+.action-btn-secondary{background:var(--off-white);color:var(--ink);border:1px solid var(--border);}
+.action-btn-secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;transition:all .2s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(76,175,80,.1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-actions{display:flex;gap:12px;margin-top:20px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-state-icon{font-size:2.4rem;margin-bottom:12px;}
+.empty-state-title{font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.empty-state-text{font-size:.9rem;color:var(--muted);}
+.search-bar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.search-input{flex:1;min-width:240px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;}
+.search-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(76,175,80,.1);}
+.tag-rank{background:rgba(46,125,50,.15);color:var(--green);padding:6px 12px;border-radius:6px;font-size:.8rem;font-weight:700;}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-content{background:var(--white);border-radius:12px;padding:30px;max-width:500px;width:90%;box-shadow:var(--shadow-lg);}
+.modal-header{font-size:1.3rem;font-weight:700;margin-bottom:20px;color:var(--ink);}
+.modal-close{float:right;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--muted);transition:all .2s;}
+.modal-close:hover{color:var(--ink);}
+.modal-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeInModal{from{opacity:0;}to{opacity:1;}}
+.modal.open{animation:fadeInModal .3s ease-out;}
+.modal-content{max-height:90vh;overflow-y:auto;}
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr);}.content-grid{grid-template-columns:1fr;}}
+@media(max-width:900px){.dashboard-wrapper{grid-template-columns:1fr;}.sidebar{width:100%;height:auto;position:relative;border-right:none;border-bottom:1px solid var(--border);padding:16px 0;display:flex;}.sidebar-top{display:none;}.sidebar-nav{flex-direction:row;gap:0;flex-wrap:wrap;}.nav-item{padding:12px 20px;border-left:none;border-bottom:3px solid transparent;}.nav-item:hover,.nav-item.active{border-bottom-color:var(--green);border-left:none;background:transparent;}.sidebar-user{position:static;margin-top:16px;flex-basis:100%;}.main-content{grid-column:1;padding:20px;padding-left:20px;}}
+</style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <a class="sidebar-logo" href="index.html">
+        <div class="sidebar-logo-icon">🌾</div>
+        <div class="sidebar-logo-text">KS Admin</div>
+      </a>
+    </div>
+    <div class="sidebar-nav">
+      <a class="nav-item active" onclick="navTo('dashboard')"><span class="nav-item-icon">📊</span> Dashboard</a>
+      <a class="nav-item" onclick="navTo('users')"><span class="nav-item-icon">👥</span> Users</a>
+      <a class="nav-item" onclick="navTo('roles')"><span class="nav-item-icon">👔</span> Roles & Perms</a>
+      <a class="nav-item" onclick="navTo('listings')"><span class="nav-item-icon">📦</span> Listings</a>
+      <a class="nav-item" onclick="navTo('blogs')"><span class="nav-item-icon">📝</span> Blogs</a>
+      <a class="nav-item" onclick="navTo('orders')"><span class="nav-item-icon">🛒</span> Orders</a>
+      <a class="nav-item" href="home.html" style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;"><span class="nav-item-icon">🏪</span> Store</a>
+      <a class="nav-item" href="index.html"><span class="nav-item-icon">🌐</span> Website</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName">Owner</div>
+      <div class="sidebar-user-role">Owner Account</div>
+      <button class="btn-secondary" style="width:100%;margin-top:12px;font-size:.8rem;" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="top-bar-title" id="pageTitle">Dashboard</div>
+      <div class="top-bar-actions">
+        <button class="btn-secondary btn-small" onclick="location.reload()">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" style="display:block;">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon">👥</div>
+          <div class="stat-card-label">Total Users</div>
+          <div class="stat-card-value" id="statUsers">0</div>
+          <div class="stat-card-change">+0 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🔓</div>
+          <div class="stat-card-label">Active Helpers</div>
+          <div class="stat-card-value" id="statHelpers">0</div>
+          <div class="stat-card-change">Permitted users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">📦</div>
+          <div class="stat-card-label">Total Listings</div>
+          <div class="stat-card-value" id="statListings">0</div>
+          <div class="stat-card-change">Active products</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">📝</div>
+          <div class="stat-card-label">Blog Posts</div>
+          <div class="stat-card-value" id="statBlogs">0</div>
+          <div class="stat-card-change">Published articles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🛒</div>
+          <div class="stat-card-label">Total Orders</div>
+          <div class="stat-card-value" id="statOrders">0</div>
+          <div class="stat-card-change">Customer orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">⚡</div>
+          <div class="stat-card-label">Active Today</div>
+          <div class="stat-card-value" id="statActive">0</div>
+          <div class="stat-card-change">Last 24 hours</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Users</h2>
+            <button class="btn-secondary btn-small" onclick="navTo('users')">View All →</button>
+          </div>
+          <div class="table-container">
+            <table class="table" id="recentUserTable">
+              <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h2>Quick Actions</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <button class="btn-primary" style="width:100%;justify-content:center;" onclick="navTo('listings')">📦 Manage Listings</button>
+            <button class="btn-secondary" style="width:100%;justify-content:center;" onclick="navTo('blogs')">📝 Write Blog</button>
+            <button class="btn-secondary" style="width:100%;justify-content:center;" onclick="navTo('orders')">🛒 View Orders</button>
+            <button class="btn-secondary" style="width:100%;justify-content:center;" onclick="navTo('users')">👥 Manage Users</button>
+            <button class="btn-secondary" style="width:100%;justify-content:center;" onclick="location.href='manage.html'">🏪 View Store</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Section -->
+    <div id="usersSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>User Management</h2>
+          <p style="font-size:.9rem;color:var(--muted);margin:0;">Manage roles, permissions, ranks, and track user activity</p>
+        </div>
+        <div class="search-bar">
+          <input type="text" class="search-input" id="userSearchInput" placeholder="Search by username or email..." />
+          <button class="btn-secondary" onclick="searchUsers()">🔍 Search</button>
+          <button class="btn-secondary" onclick="resetUserSearch()">↺ Reset</button>
+        </div>
+        <div class="table-container">
+          <table class="table" id="userTable">
+            <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Rank</th><th>Role</th><th>Permission</th><th>Last Login</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div id="userModal" class="modal">
+      <div class="modal-content" style="animation:slideDown .4s ease-out;">
+        <button class="modal-close" onclick="closeUserModal()">&times;</button>
+        <div class="modal-header">✏️ Edit User Details</div>
+        <form id="userEditForm">
+          <div class="form-group">
+            <label for="editUserName">Full Name</label>
+            <input id="editUserName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="editUserUsername">Username</label>
+            <input id="editUserUsername" type="text" disabled />
+          </div>
+          <div class="form-group">
+            <label for="editUserEmail">Email</label>
+            <input id="editUserEmail" type="email" required />
+          </div>
+          <div class="form-group">
+            <label for="editUserRank">Rank/Tier</label>
+            <select id="editUserRank" required>
+              <option value="bronze">🥉 Bronze</option>
+              <option value="silver">🥈 Silver</option>
+              <option value="gold">🥇 Gold</option>
+              <option value="premium">⭐ Premium</option>
+              <option value="vip">👑 VIP</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editUserRole">Role</label>
+            <select id="editUserRole" required>
+              <option value="user">User</option>
+              <option value="helper">Helper</option>
+              <option value="owner">Owner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editUserPermitted">Dashboard Access</label>
+            <select id="editUserPermitted" required>
+              <option value="false">No Access</option>
+              <option value="true">Permitted</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeUserModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Listing Edit Modal -->
+    <div id="listingModal" class="modal">
+      <div class="modal-content" style="animation:slideDown .4s ease-out;">
+        <button class="modal-close" onclick="closeListingModal()">&times;</button>
+        <div class="modal-header">📦 Edit Product Listing</div>
+        <form id="listingEditForm">
+          <div class="form-group">
+            <label for="editListingTitle">Product Title *</label>
+            <input id="editListingTitle" type="text" placeholder="Enter product name" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editListingCategory">Category *</label>
+              <select id="editListingCategory" required>
+                <option value="">Select Category</option>
+                <option value="seeds">🌾 Seeds</option>
+                <option value="fertilizers">🧪 Fertilizers</option>
+                <option value="pesticides">🐛 Pesticides</option>
+                <option value="tools">💧 Tools</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editListingPrice">Price *</label>
+              <input id="editListingPrice" type="text" placeholder="₹500/kg" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editListingImage">Product Image *</label>
+              <input id="editListingImage" type="file" accept="image/*" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editListingDesc">Description *</label>
+            <textarea id="editListingDesc" placeholder="Describe your product..." rows="4" required></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeListingModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Role Edit Modal -->
+    <div id="roleModal" class="modal">
+      <div class="modal-content" style="animation:slideDown .4s ease-out;">
+        <button class="modal-close" onclick="closeRoleModal()">&times;</button>
+        <div class="modal-header">🔧 Edit Role</div>
+        <form id="roleEditForm">
+          <div class="form-group">
+            <label for="editRoleName">Role Name</label>
+            <input id="editRoleName" type="text" placeholder="e.g. content_manager" required />
+          </div>
+          <div class="form-group">
+            <label for="editRoleTitle">Display Title</label>
+            <input id="editRoleTitle" type="text" placeholder="e.g. Content Manager" required />
+          </div>
+          <div class="form-group">
+            <label>Permissions (Select all that apply)</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;background:var(--off-white);border-radius:8px;">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="manage_orders"> 📋 Manage Orders
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="manage_listings"> 📦 Manage Listings
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="manage_blogs"> 📝 Manage Blogs
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="access_customer_data"> 👥 Access Customer Data
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="manage_users"> 🔑 Manage Users
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                <input type="checkbox" name="editPermissions" value="analytics"> 📊 View Analytics
+              </label>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeRoleModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Save Role</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Blog Edit Modal -->
+    <div id="blogModal" class="modal">
+      <div class="modal-content" style="animation:slideDown .4s ease-out;max-width:600px;">
+        <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+        <div class="modal-header">📝 Edit Blog Post</div>
+        <form id="blogEditForm">
+          <div class="form-group">
+            <label for="editBlogTitle">Blog Title *</label>
+            <input id="editBlogTitle" type="text" placeholder="Enter blog title" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editBlogAuthor">Author *</label>
+              <input id="editBlogAuthor" type="text" placeholder="Your name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editBlogContent">Content *</label>
+            <textarea id="editBlogContent" placeholder="Write your blog article..." rows="6" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editBlogImage">Featured Image URL *</label>
+            <input id="editBlogImage" type="text" placeholder="https://example.com/image.jpg" required />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeBlogModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Update Blog</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order Edit Modal -->
+    <div id="orderModal" class="modal">
+      <div class="modal-content" style="animation:slideDown .4s ease-out;">
+        <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+        <div class="modal-header">🛒 Edit Order</div>
+        <form id="orderEditForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editOrderCustomer">Customer Name *</label>
+              <input id="editOrderCustomer" type="text" placeholder="Customer name" required />
+            </div>
+            <div class="form-group">
+              <label for="editOrderEmail">Customer Email *</label>
+              <input id="editOrderEmail" type="email" placeholder="email@example.com" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editOrderProduct">Product *</label>
+              <input id="editOrderProduct" type="text" placeholder="Product name" required />
+            </div>
+            <div class="form-group">
+              <label for="editOrderQuantity">Quantity *</label>
+              <input id="editOrderQuantity" type="number" placeholder="1" min="1" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editOrderTotal">Total Amount (₹) *</label>
+              <input id="editOrderTotal" type="text" placeholder="₹500" required />
+            </div>
+            <div class="form-group">
+              <label for="editOrderStatus">Order Status *</label>
+              <select id="editOrderStatus" required>
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeOrderModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Update Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Listings Section -->
+    <div id="listingsSection" style="display:none;">
+      <div class="content-grid" style="grid-template-columns:1fr;">
+        <div class="card">
+          <div class="card-header">
+            <h2>Product Listings</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin:0;">Create, edit, and manage your agricultural products</p>
+          </div>
+          <div class="table-container">
+            <table class="table" id="listingTable">
+              <thead><tr><th>Title</th><th>Category</th><th>Price</th><th>Image</th><th>Description</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Add New Listing</h2>
+          </div>
+          <form id="listingForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="listingTitle">Product Title</label>
+                <input id="listingTitle" type="text" placeholder="e.g. Premium Wheat Seeds" required />
+              </div>
+              <div class="form-group">
+                <label for="listingCategory">Category</label>
+                <input id="listingCategory" type="text" placeholder="e.g. seeds, fertilizers" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="listingPrice">Price</label>
+                <input id="listingPrice" type="text" placeholder="₹250/kg" required />
+              </div>
+              <div class="form-group">
+                <label for="listingImage">Product Image URL</label>
+                <input id="listingImage" type="text" placeholder="https://example.com/image.jpg" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="listingDescription">Description</label>
+              <textarea id="listingDescription" placeholder="Describe your product..." required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">✚ Create Listing</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Category Management -->
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Category Management</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin:0;">Organize products by category</p>
+          </div>
+          <div class="table-container">
+            <table class="table" id="categoryTable">
+              <thead><tr><th>Category Name</th><th>Icon</th><th>Product Count</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <form id="categoryForm" style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="categoryName">New Category Name</label>
+                <input id="categoryName" type="text" placeholder="e.g. seeds, fertilizers, tools" required />
+              </div>
+              <div class="form-group">
+                <label for="categoryIcon">Category Icon/Emoji</label>
+                <input id="categoryIcon" type="text" placeholder="🌾" maxlength="2" required />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">✚ Add Category</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Store Layout Settings -->
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Store Layout Settings</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin:0;">Customize how your store appears</p>
+          </div>
+          <form id="layoutForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="storeTitle">Store Title</label>
+                <input id="storeTitle" type="text" placeholder="Fresh Agricultural Products" value="Fresh Agricultural Products" />
+              </div>
+              <div class="form-group">
+                <label for="storeSubtitle">Store Subtitle</label>
+                <input id="storeSubtitle" type="text" placeholder="Discover premium quality..." value="Discover premium quality seeds, fertilizers, tools and more for your farm." />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="productsPerRow">Products Per Row</label>
+                <select id="productsPerRow">
+                  <option value="2">2 Products</option>
+                  <option value="3">3 Products</option>
+                  <option value="4" selected>4 Products</option>
+                  <option value="5">5 Products</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="defaultCategory">Default Category Filter</label>
+                <select id="defaultCategory">
+                  <option value="all" selected>All Products</option>
+                  <option value="seeds">Seeds</option>
+                  <option value="fertilizers">Fertilizers</option>
+                  <option value="pesticides">Pesticides</option>
+                  <option value="tools">Tools</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="showCategories">Show Category Filters</label>
+                <select id="showCategories">
+                  <option value="true" selected>Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="productImageHeight">Product Image Height</label>
+                <select id="productImageHeight">
+                  <option value="180">Compact</option>
+                  <option value="200" selected>Medium</option>
+                  <option value="250">Large</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">💾 Save Layout Settings</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blogs Section -->
+    <div id="blogsSection" style="display:none;">
+      <div class="content-grid" style="grid-template-columns:1fr;">
+        <div class="card">
+          <div class="card-header">
+            <h2>Published Blogs</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin:0;">Manage your farm articles and knowledge base</p>
+          </div>
+          <div class="table-container">
+            <table class="table" id="blogTable">
+              <thead><tr><th>Title</th><th>Author</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Create New Blog Post</h2>
+          </div>
+          <form id="blogForm">
+            <div class="form-group">
+              <label for="blogTitle">Blog Title</label>
+              <input id="blogTitle" type="text" placeholder="e.g. Tips for Better Wheat Farming" required />
+            </div>
+            <div class="form-group">
+              <label for="blogAuthor">Author</label>
+              <input id="blogAuthor" type="text" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+              <label for="blogContent">Blog Content</label>
+              <textarea id="blogContent" placeholder="Write your blog article here..." required style="min-height:200px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="blogImage">Featured Image URL</label>
+              <input id="blogImage" type="text" placeholder="https://example.com/image.jpg" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">📝 Publish Blog</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div id="ordersSection" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>Orders Management</h2>
+          <p style="font-size:.9rem;color:var(--muted);margin:0;">Track and manage all customer orders</p>
+        </div>
+        <div class="table-container">
+          <table class="table" id="orderTable">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Quantity</th><th>Total</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:24px;">
+        <div class="card-header">
+          <h2>Create New Order</h2>
+        </div>
+        <form id="orderForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="orderCustomer">Customer Name</label>
+              <input id="orderCustomer" type="text" placeholder="Customer name" required />
+            </div>
+            <div class="form-group">
+              <label for="orderEmail">Customer Email</label>
+              <input id="orderEmail" type="email" placeholder="customer@example.com" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="orderProduct">Product</label>
+              <input id="orderProduct" type="text" placeholder="Product name" required />
+            </div>
+            <div class="form-group">
+              <label for="orderQuantity">Quantity</label>
+              <input id="orderQuantity" type="number" placeholder="1" min="1" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="orderTotal">Total Amount (₹)</label>
+              <input id="orderTotal" type="text" placeholder="₹500" required />
+            </div>
+            <div class="form-group">
+              <label for="orderStatus">Order Status</label>
+              <select id="orderStatus" required>
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">✚ Create Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Roles & Permissions Section -->
+    <div id="rolesSection" style="display:none;">
+      <div class="content-grid" style="grid-template-columns:1fr;">
+        <div class="card">
+          <div class="card-header">
+            <h2>Custom Roles & Ranks</h2>
+            <p style="font-size:.9rem;color:var(--muted);margin:0;">Create and manage custom roles with specific titles and permissions</p>
+          </div>
+          <div class="table-container">
+            <table class="table" id="rolesTable">
+              <thead><tr><th>Role Name</th><th>Title</th><th>Users</th><th>Permissions</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Create New Role</h2>
+          </div>
+          <form id="roleForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="roleName">Role Name *</label>
+                <input id="roleName" type="text" placeholder="e.g. content_manager, blog_editor" required />
+              </div>
+              <div class="form-group">
+                <label for="roleTitle">Display Title *</label>
+                <input id="roleTitle" type="text" placeholder="e.g. Content Manager, Blog Editor" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Permissions (Select all that apply) *</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;background:var(--off-white);border-radius:8px;">
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="manage_orders"> 📋 Manage Orders
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="manage_listings"> 📦 Manage Listings
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="manage_blogs"> 📝 Manage Blogs
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="access_customer_data"> 👥 Access Customer Data
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="manage_users"> 🔑 Manage Users
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+                  <input type="checkbox" name="permissions" value="analytics"> 📊 View Analytics
+                </label>
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top:20px;">
+              <button type="submit" class="btn-primary">✚ Create Role</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Assign Roles to Users</h2>
+          </div>
+          <form id="assignRoleForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="assignRoleUser">Select User *</label>
+                <select id="assignRoleUser" required>
+                  <option value="">-- Select a user --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="assignRoleSelection">Select Role *</label>
+                <select id="assignRoleSelection" required>
+                  <option value="">-- Select a role --</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;">
+                <input type="checkbox" id="approvePermissions"> ✓ Approve & Grant Permissions
+              </label>
+              <p style="font-size:.85rem;color:var(--muted);margin:8px 0 0 0;">Enable this to allow the user to access dashboard with assigned role permissions</p>
+            </div>
+            <div class="form-actions" style="margin-top:20px;">
+              <button type="submit" class="btn-primary">✓ Assign Role</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<script>
+function getUsers(){
+  const raw = localStorage.getItem('ks_users');
+  return raw ? JSON.parse(raw) : {};
+}
+function saveUsers(users){
+  localStorage.setItem('ks_users', JSON.stringify(users));
+}
+function getProducts(){
+  const raw = localStorage.getItem('ks_products');
+  return raw ? JSON.parse(raw) : [];
+}
+function saveProducts(products){
+  localStorage.setItem('ks_products', JSON.stringify(products));
+}
+function getBlogs(){
+  const raw = localStorage.getItem('ks_blogs');
+  return raw ? JSON.parse(raw) : [];
+}
+function saveBlogs(blogs){
+  localStorage.setItem('ks_blogs', JSON.stringify(blogs));
+}
+function getOrders(){
+  const raw = localStorage.getItem('ks_orders');
+  return raw ? JSON.parse(raw) : [];
+}
+function saveOrders(orders){
+  localStorage.setItem('ks_orders', JSON.stringify(orders));
+}
+function getCurrentUser(){
+  const raw = localStorage.getItem('ks_current_user');
+  return raw ? JSON.parse(raw) : null;
+}
+function ensureOwner(){
+  const users = getUsers();
+  if (!users.owner) {
+    users.owner = { username: 'owner', password: 'owner123', fullName: 'Owner', email: 'owner@kisansamadhan.com', role: 'owner', rank: 'vip', permitted: true, lastLogin: '' };
+    saveUsers(users);
+  }
+}
+let currentEditingUser = null;
+function getRankIcon(rank){
+  const icons = { 'bronze': '🥉', 'silver': '🥈', 'gold': '🥇', 'premium': '⭐', 'vip': '👑' };
+  return icons[rank] || '🥉';
+}
+function openUserModal(username){
+  currentEditingUser = username;
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username === username);
+  if (!user) return;
+  document.getElementById('editUserName').value = user.fullName || '';
+  document.getElementById('editUserUsername').value = user.username;
+  document.getElementById('editUserEmail').value = user.email || '';
+  document.getElementById('editUserRank').value = user.rank || 'bronze';
+  document.getElementById('editUserRole').value = user.role || 'user';
+  document.getElementById('editUserPermitted').value = user.permitted ? 'true' : 'false';
+  document.getElementById('userModal').classList.add('open');
+}
+function closeUserModal(){
+  document.getElementById('userModal').classList.remove('open');
+  document.getElementById('userEditForm').reset();
+  currentEditingUser = null;
+}
+let currentEditingProductId = null;
+let currentEditingRoleKey = null;
+function openListingModal(id){
+  const products = getProducts();
+  const product = products.find(item => item.id === id);
+  if (!product) return;
+  currentEditingProductId = id;
+  document.getElementById('editListingTitle').value = product.title;
+  document.getElementById('editListingCategory').value = product.category;
+  document.getElementById('editListingPrice').value = product.price;
+  // Don't set file input value - browsers don't allow it for security
+  // document.getElementById('editListingImage').value = product.image;
+  document.getElementById('editListingDesc').value = product.description;
+  document.getElementById('listingModal').classList.add('open');
+}
+function closeListingModal(){
+  document.getElementById('listingModal').classList.remove('open');
+  document.getElementById('listingEditForm').reset();
+  currentEditingProductId = null;
+}
+function searchUsers(){
+  const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
+  if (!query) { renderUserRows(); return; }
+  const users = Object.values(getUsers());
+  const filtered = users.filter(u => 
+    u.username.toLowerCase().includes(query) || 
+    (u.email && u.email.toLowerCase().includes(query)) ||
+    (u.fullName && u.fullName.toLowerCase().includes(query))
+  );
+  const tbody = document.querySelector('#userTable tbody');
+  tbody.innerHTML = filtered.length ? filtered.map(user => `
+    <tr>
+      <td><strong>${user.fullName || user.username}</strong></td>
+      <td>${user.username}</td>
+      <td>${user.email || '-'}</td>
+      <td><span class="tag-rank">${getRankIcon(user.rank)} ${user.rank || 'bronze'}</span></td>
+      <td><span class="tag ${user.role==='owner' ? 'tag-owner' : user.permitted ? 'tag-helper' : 'tag-normal'}">${user.role}</span></td>
+      <td>${user.permitted ? '✓ Yes' : '○ No'}</td>
+      <td>${formatDate(user.lastLogin)}</td>
+      <td><button class="action-btn action-btn-secondary" onclick="openUserModal('${user.username}')">Edit</button> ${user.role!=='owner' ? `<button class="action-btn ${user.permitted ? 'action-btn-secondary' : 'action-btn-primary'}" onclick="togglePermit('${user.username}')">${user.permitted ? 'Revoke' : 'Grant'}</button>` : '-'}</td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--muted);">No users found</td></tr>';
+}
+function resetUserSearch(){
+  document.getElementById('userSearchInput').value = '';
+  renderUserRows();
+}
+function ensureProducts(){
+  let products = getProducts();
+  if (!products.length) {
+    products = [
+      { id:'l1', title:'Premium Wheat Seeds', category:'seeds', price:'₹250/kg', image:'🌾', description:'High-yield wheat seeds suitable for all soil types.' },
+      { id:'l2', title:'NPK Fertilizer 20-20-20', category:'fertilizers', price:'₹320/bag', image:'🧪', description:'Balanced fertilizer for all crops.' },
+      { id:'l3', title:'Bio Pesticide Spray', category:'pesticides', price:'₹89/L', image:'🐛', description:'Safe organic pesticide for pest control.' }
+    ];
+    saveProducts(products);
+  }
+  return products;
+}
+function navTo(section){
+  document.querySelectorAll('[id$="Section"]').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sectionNames = { dashboard: 'Dashboard', users: 'User Management', listings: 'Listings', blogs: 'Blog Management', orders: 'Orders' };
+  document.getElementById(section + 'Section').style.display = 'block';
+  document.querySelector(`.nav-item[onclick="navTo('${section}')"]`).classList.add('active');
+  document.getElementById('pageTitle').textContent = sectionNames[section];
+}
+function logout(){
+  localStorage.removeItem('ks_current_user');
+  window.location.href = 'login.html';
+}
+function formatDate(timestamp){
+  if (!timestamp) return '-';
+  const date = new Date(timestamp);
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+}
+function updateStats(){
+  const users = Object.values(getUsers());
+  const products = getProducts();
+  const blogs = getBlogs();
+  const orders = getOrders();
+  const helpers = users.filter(u => u.role !== 'owner' && u.permitted).length;
+  const activeToday = users.filter(u => u.lastLogin && Date.now() - new Date(u.lastLogin).getTime() < 24*60*60*1000).length;
+  document.getElementById('statUsers').textContent = users.length;
+  document.getElementById('statHelpers').textContent = helpers;
+  document.getElementById('statListings').textContent = products.length;
+  document.getElementById('statBlogs').textContent = blogs.length;
+  document.getElementById('statOrders').textContent = orders.length;
+  document.getElementById('statActive').textContent = activeToday;
+}
+function renderRecentUsers(){
+  const users = Object.values(getUsers()).slice(0, 5);
+  const tbody = document.querySelector('#recentUserTable tbody');
+  tbody.innerHTML = users.length ? users.map(user => `
+    <tr>
+      <td><strong>${user.fullName || user.username}</strong></td>
+      <td><span class="tag ${user.role==='owner' ? 'tag-owner' : 'tag-helper'}">${user.role}</span></td>
+      <td>${user.permitted ? '✓ Permitted' : '○ Pending'}</td>
+    </tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--muted);">No users yet</td></tr>';
+}
+function renderUserRows(){
+  const users = Object.values(getUsers());
+  const tbody = document.querySelector('#userTable tbody');
+  tbody.innerHTML = users.length ? users.map(user => `
+    <tr>
+      <td><strong>${user.fullName || user.username}</strong></td>
+      <td>${user.username}</td>
+      <td>${user.email || '-'}</td>
+      <td><span class="tag-rank">${getRankIcon(user.rank)} ${user.rank || 'bronze'}</span></td>
+      <td><span class="tag ${user.role==='owner' ? 'tag-owner' : user.permitted ? 'tag-helper' : 'tag-normal'}">${user.role}</span></td>
+      <td>${user.permitted ? '✓ Yes' : '○ No'}</td>
+      <td>${formatDate(user.lastLogin)}</td>
+      <td><button class="action-btn action-btn-secondary" onclick="openUserModal('${user.username}')">Edit</button> ${user.role!=='owner' ? `<button class="action-btn ${user.permitted ? 'action-btn-secondary' : 'action-btn-primary'}" onclick="togglePermit('${user.username}')">${user.permitted ? 'Revoke' : 'Grant'}</button>` : '-'}</td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--muted);">No users found</td></tr>';
+}
+function togglePermit(username){
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username === username);
+  if (!user) return;
+  user.permitted = !user.permitted;
+  saveUsers(users);
+  renderUserRows();
+  renderRecentUsers();
+  updateStats();
+}
+function renderListingRows(){
+  const products = getProducts();
+  const tbody = document.querySelector('#listingTable tbody');
+  tbody.innerHTML = products.length ? products.map(product => `
+    <tr>
+      <td><strong>${product.title}</strong></td>
+      <td>${product.category}</td>
+      <td>${product.price}</td>
+      <td><img src="${product.image}" alt="${product.title}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;" onerror="this.textContent='N/A'" /></td>
+      <td>${product.description}</td>
+      <td><button class="action-btn action-btn-secondary" onclick="openListingModal('${product.id}')">Edit</button> <button class="action-btn action-btn-primary" onclick="removeListing('${product.id}')">Delete</button></td>
+    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);">No listings yet</td></tr>';
+}
+function editListing(id){
+  openListingModal(id);
+}
+function removeListing(id){
+  if (!confirm('Are you sure? This action cannot be undone.')) return;
+  let products = getProducts();
+  products = products.filter(product => product.id !== id);
+  saveProducts(products);
+  renderListingRows();
+  updateStats();
+}
+
+function getCategories(){
+  const raw = localStorage.getItem('ks_categories');
+  return raw ? JSON.parse(raw) : [
+    { name: 'seeds', icon: '🌾' },
+    { name: 'fertilizers', icon: '🧪' },
+    { name: 'pesticides', icon: '🐛' },
+    { name: 'tools', icon: '💧' }
+  ];
+}
+function saveCategories(categories){
+  localStorage.setItem('ks_categories', JSON.stringify(categories));
+}
+function renderCategoryRows(){
+  const categories = getCategories();
+  const products = getProducts();
+  const tbody = document.querySelector('#categoryTable tbody');
+  tbody.innerHTML = categories.map(cat => {
+    const count = products.filter(p => p.category === cat.name).length;
+    return `
+      <tr>
+        <td><strong>${cat.name}</strong></td>
+        <td>${cat.icon}</td>
+        <td>${count}</td>
+        <td><button class="action-btn action-btn-primary" onclick="removeCategory('${cat.name}')">Delete</button></td>
+      </tr>`;
+  }).join('');
+}
+function removeCategory(catName){
+  if (!confirm('Delete this category? Products in this category will remain.')) return;
+  let categories = getCategories();
+  categories = categories.filter(c => c.name !== catName);
+  saveCategories(categories);
+  renderCategoryRows();
+}
+
+function getLayoutSettings(){
+  const raw = localStorage.getItem('ks_layout_settings');
+  return raw ? JSON.parse(raw) : {
+    storeTitle: 'Fresh Agricultural Products',
+    storeSubtitle: 'Discover premium quality seeds, fertilizers, tools and more for your farm.',
+    productsPerRow: 4,
+    defaultCategory: 'all',
+    showCategories: true,
+    productImageHeight: 200
+  };
+}
+function saveLayoutSettings(settings){
+  localStorage.setItem('ks_layout_settings', JSON.stringify(settings));
+}
+function loadLayoutSettings(){
+  const settings = getLayoutSettings();
+  document.getElementById('storeTitle').value = settings.storeTitle;
+  document.getElementById('storeSubtitle').value = settings.storeSubtitle;
+  document.getElementById('productsPerRow').value = settings.productsPerRow;
+  document.getElementById('defaultCategory').value = settings.defaultCategory;
+  document.getElementById('showCategories').value = settings.showCategories ? 'true' : 'false';
+  document.getElementById('productImageHeight').value = settings.productImageHeight;
+}
+
+function renderBlogRows(){
+  const blogs = getBlogs();
+  const tbody = document.querySelector('#blogTable tbody');
+  tbody.innerHTML = blogs.length ? blogs.map(blog => `
+    <tr>
+      <td><strong>${blog.title}</strong></td>
+      <td>${blog.author}</td>
+      <td>${formatDate(blog.date)}</td>
+      <td><span class="tag tag-helper">Published</span></td>
+      <td><button class="action-btn action-btn-secondary" onclick="editBlog('${blog.id}')">Edit</button> <button class="action-btn action-btn-primary" onclick="removeBlog('${blog.id}')">Delete</button></td>
+    </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No blogs yet</td></tr>';
+}
+function editBlog(id){
+  const blogs = getBlogs();
+  const blog = blogs.find(b => b.id === id);
+  if (!blog) return;
+  const title = prompt('Blog title', blog.title);
+  const author = prompt('Author', blog.author);
+  if (title && author) {
+    blog.title = title;
+    blog.author = author;
+    saveBlogs(blogs);
+    renderBlogRows();
+    updateStats();
+  }
+}
+function removeBlog(id){
+  if (!confirm('Are you sure? This action cannot be undone.')) return;
+  let blogs = getBlogs();
+  blogs = blogs.filter(blog => blog.id !== id);
+  saveBlogs(blogs);
+  renderBlogRows();
+  updateStats();
+}
+function renderOrderRows(){
+  const orders = getOrders();
+  const tbody = document.querySelector('#orderTable tbody');
+  tbody.innerHTML = orders.length ? orders.map(order => `
+    <tr>
+      <td><strong>#${order.id.slice(-6)}</strong></td>
+      <td>${order.customer}</td>
+      <td>${order.product}</td>
+      <td>${order.quantity}</td>
+      <td>${order.total}</td>
+      <td>${formatDate(order.date)}</td>
+      <td><span class="tag ${order.status==='delivered' ? 'tag-helper' : order.status==='shipped' ? 'tag-owner' : 'tag-normal'}">${order.status}</span></td>
+      <td><button class="action-btn action-btn-secondary" onclick="editOrder('${order.id}')">Edit</button> <button class="action-btn action-btn-primary" onclick="removeOrder('${order.id}')">Delete</button></td>
+    </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--muted);">No orders yet</td></tr>';
+}
+function editOrder(id){
+  const orders = getOrders();
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+  const status = prompt('Order status (pending/processing/shipped/delivered)', order.status);
+  if (status && ['pending','processing','shipped','delivered'].includes(status)) {
+    order.status = status;
+    saveOrders(orders);
+    renderOrderRows();
+    updateStats();
+  }
+}
+function removeOrder(id){
+  if (!confirm('Are you sure? This action cannot be undone.')) return;
+  let orders = getOrders();
+  orders = orders.filter(order => order.id !== id);
+  saveOrders(orders);
+  renderOrderRows();
+  updateStats();
+}
+
+// Roles & Permissions Functions
+function getRoles(){
+  const raw = localStorage.getItem('ks_roles');
+  if (!raw) {
+    const defaultRoles = {
+      'helper': { name: 'helper', title: 'Helper', permissions: ['manage_orders', 'manage_listings'], userCount: 0 },
+      'moderator': { name: 'moderator', title: 'Moderator', permissions: ['manage_blogs', 'manage_orders'], userCount: 0 }
+    };
+    localStorage.setItem('ks_roles', JSON.stringify(defaultRoles));
+    return defaultRoles;
+  }
+  return JSON.parse(raw);
+}
+function saveRoles(roles){
+  localStorage.setItem('ks_roles', JSON.stringify(roles));
+}
+function getUserRoles(username){
+  const raw = localStorage.getItem('ks_user_roles');
+  return raw ? JSON.parse(raw) : {};
+}
+function saveUserRoles(userRoles){
+  localStorage.setItem('ks_user_roles', JSON.stringify(userRoles));
+}
+function renderRoleRows(){
+  const roles = getRoles();
+  const userRoles = getUserRoles();
+  const tbody = document.querySelector('#rolesTable tbody');
+  tbody.innerHTML = Object.entries(roles).map(([key, role]) => {
+    const usersWithRole = Object.values(userRoles).filter(ur => ur.role === key).length;
+    return `
+      <tr>
+        <td><strong>${role.name}</strong></td>
+        <td>${role.title}</td>
+        <td>${usersWithRole}</td>
+        <td><span class="tag-rank">${role.permissions.length} permissions</span></td>
+        <td>
+          <button class="action-btn action-btn-secondary" onclick="editRole('${key}')">Edit</button>
+          <button class="action-btn action-btn-primary" onclick="deleteRole('${key}')" ${key === 'helper' || key === 'moderator' ? 'disabled' : ''}>Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+function editRole(roleKey){
+  const roles = getRoles();
+  const role = roles[roleKey];
+  if (!role) return;
+  
+  currentEditingRoleKey = roleKey;
+  document.getElementById('editRoleName').value = roleKey;
+  document.getElementById('editRoleTitle').value = role.title;
+  
+  // Clear all checkboxes first
+  document.querySelectorAll('input[name="editPermissions"]').forEach(cb => cb.checked = false);
+  // Check the permissions that this role has
+  role.permissions.forEach(perm => {
+    const checkbox = document.querySelector(`input[name="editPermissions"][value="${perm}"]`);
+    if (checkbox) checkbox.checked = true;
+  });
+  
+  document.getElementById('roleModal').classList.add('open');
+}
+
+function closeRoleModal(){
+  document.getElementById('roleModal').classList.remove('open');
+  document.getElementById('roleEditForm').reset();
+  currentEditingRoleKey = null;
+}
+function deleteRole(roleKey){
+  if (!confirm('Are you sure? Users with this role will lose access.')) return;
+  const roles = getRoles();
+  delete roles[roleKey];
+  saveRoles(roles);
+  renderRoleRows();
+  populateRoleSelects();
+}
+function populateRoleSelects(){
+  const roles = getRoles();
+  const select = document.getElementById('assignRoleSelection');
+  select.innerHTML = '<option value="">-- Select a role --</option>' + 
+    Object.entries(roles).map(([key, role]) => `<option value="${key}">${role.title}</option>`).join('');
+}
+function populateUserSelects(){
+  const users = Object.values(getUsers());
+  const select = document.getElementById('assignRoleUser');
+  select.innerHTML = '<option value="">-- Select a user --</option>' + 
+    users.filter(u => u.role !== 'owner').map(u => `<option value="${u.username}">${u.fullName || u.username}</option>`).join('');
+}
+
+function initDashboard(){
+  ensureOwner();
+  const user = getCurrentUser();
+  if (!user) { window.location.href = 'login.html?redirect=dashboard.html'; return; }
+  if (user.role !== 'owner') { window.location.href = 'home.html'; return; }
+  document.getElementById('sidebarUserName').textContent = user.fullName || 'Owner';
+  ensureProducts();
+  renderRecentUsers();
+  renderUserRows();
+  renderListingRows();
+  renderCategoryRows();
+  loadLayoutSettings();
+  renderBlogRows();
+  renderOrderRows();
+  renderRoleRows();
+  populateUserSelects();
+  populateRoleSelects();
+  updateStats();
+}
+initDashboard();
+document.getElementById('listingForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const title = document.getElementById('listingTitle').value.trim();
+  const category = document.getElementById('listingCategory').value.trim();
+  const price = document.getElementById('listingPrice').value.trim();
+  const image = document.getElementById('listingImage').value.trim();
+  const description = document.getElementById('listingDescription').value.trim();
+  if (!title || !category || !price || !image || !description) return;
+  const products = getProducts();
+  products.push({ id: `p${Date.now()}`, title, category, price, image, description });
+  saveProducts(products);
+  renderListingRows();
+  updateStats();
+  this.reset();
+});
+document.getElementById('listingEditForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  if (!currentEditingProductId) return;
+  const products = getProducts();
+  const product = products.find(p => p.id === currentEditingProductId);
+  if (!product) return;
+
+  const imageInput = document.getElementById('editListingImage');
+  const handleSubmit = (imageData) => {
+    product.title = document.getElementById('editListingTitle').value.trim();
+    product.category = document.getElementById('editListingCategory').value;
+    product.price = document.getElementById('editListingPrice').value.trim();
+    product.image = imageData;
+    product.description = document.getElementById('editListingDesc').value.trim();
+    saveProducts(products);
+    renderListingRows();
+    updateStats();
+    closeListingModal();
+    alert('✓ Product updated successfully!');
+  };
+
+  if (imageInput.files && imageInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      handleSubmit(e.target.result);
+    };
+    reader.readAsDataURL(imageInput.files[0]);
+  } else {
+    // Keep existing image if no new file selected
+    handleSubmit(product.image);
+  }
+});
+document.getElementById('roleEditForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  if (!currentEditingRoleKey) return;
+  
+  const roles = getRoles();
+  const role = roles[currentEditingRoleKey];
+  if (!role) return;
+  
+  const newRoleKey = document.getElementById('editRoleName').value.trim();
+  const newTitle = document.getElementById('editRoleTitle').value.trim();
+  const permissions = Array.from(document.querySelectorAll('input[name="editPermissions"]:checked')).map(cb => cb.value);
+  
+  // If role key changed, we need to update all user roles too
+  if (newRoleKey !== currentEditingRoleKey) {
+    const userRoles = getUserRoles();
+    Object.keys(userRoles).forEach(username => {
+      if (userRoles[username].role === currentEditingRoleKey) {
+        userRoles[username].role = newRoleKey;
+      }
+    });
+    saveUserRoles(userRoles);
+    delete roles[currentEditingRoleKey];
+  }
+  
+  roles[newRoleKey] = {
+    name: newRoleKey,
+    title: newTitle,
+    permissions: permissions
+  };
+  
+  saveRoles(roles);
+  renderRoleRows();
+  populateRoleSelects();
+  closeRoleModal();
+  alert('✓ Role updated successfully!');
+});
+document.getElementById('blogForm').addEventListener('submit', function(event){
+  const author = document.getElementById('blogAuthor').value.trim();
+  const content = document.getElementById('blogContent').value.trim();
+  const image = document.getElementById('blogImage').value.trim();
+  if (!title || !author || !content || !image) return;
+  const blogs = getBlogs();
+  blogs.push({ id: `b${Date.now()}`, title, author, content, image, date: new Date().toISOString() });
+  saveBlogs(blogs);
+  renderBlogRows();
+  updateStats();
+  this.reset();
+});
+document.getElementById('orderForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const customer = document.getElementById('orderCustomer').value.trim();
+  const email = document.getElementById('orderEmail').value.trim();
+  const product = document.getElementById('orderProduct').value.trim();
+  const quantity = document.getElementById('orderQuantity').value.trim();
+  const total = document.getElementById('orderTotal').value.trim();
+  const status = document.getElementById('orderStatus').value;
+  if (!customer || !email || !product || !quantity || !total || !status) return;
+  const orders = getOrders();
+  orders.push({ id: `o${Date.now()}`, customer, email, product, quantity, total, status, date: new Date().toISOString() });
+  saveOrders(orders);
+  renderOrderRows();
+  updateStats();
+  this.reset();
+});
+document.getElementById('userEditForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  if (!currentEditingUser) return;
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username === currentEditingUser);
+  if (!user) return;
+  user.fullName = document.getElementById('editUserName').value.trim();
+  user.email = document.getElementById('editUserEmail').value.trim();
+  user.rank = document.getElementById('editUserRank').value;
+  user.role = document.getElementById('editUserRole').value;
+  user.permitted = document.getElementById('editUserPermitted').value === 'true';
+  saveUsers(users);
+  renderUserRows();
+  renderRecentUsers();
+  updateStats();
+  closeUserModal();
+  alert('User details updated successfully!');
+});
+document.getElementById('categoryForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const name = document.getElementById('categoryName').value.trim().toLowerCase();
+  const icon = document.getElementById('categoryIcon').value.trim();
+  if (!name || !icon) return;
+  const categories = getCategories();
+  if (categories.find(c => c.name === name)) {
+    alert('This category already exists!');
+    return;
+  }
+  categories.push({ name, icon });
+  saveCategories(categories);
+  renderCategoryRows();
+  this.reset();
+  alert('Category added successfully!');
+});
+document.getElementById('layoutForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const settings = {
+    storeTitle: document.getElementById('storeTitle').value.trim(),
+    storeSubtitle: document.getElementById('storeSubtitle').value.trim(),
+    productsPerRow: parseInt(document.getElementById('productsPerRow').value),
+    defaultCategory: document.getElementById('defaultCategory').value,
+    showCategories: document.getElementById('showCategories').value === 'true',
+    productImageHeight: parseInt(document.getElementById('productImageHeight').value)
+  };
+  if (!settings.storeTitle) return;
+  saveLayoutSettings(settings);
+  alert('Layout settings saved successfully! Changes will appear on the store page.');
+});
+
+document.getElementById('roleForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const roleName = document.getElementById('roleName').value.trim().toLowerCase();
+  const roleTitle = document.getElementById('roleTitle').value.trim();
+  const permCheckboxes = document.querySelectorAll('input[name="permissions"]:checked');
+  const permissions = Array.from(permCheckboxes).map(cb => cb.value);
+  
+  if (!roleName || !roleTitle || permissions.length === 0) {
+    alert('Please fill in all fields and select at least one permission.');
+    return;
+  }
+  
+  const roles = getRoles();
+  if (roles[roleName]) {
+    alert('This role already exists!');
+    return;
+  }
+  
+  roles[roleName] = { name: roleName, title: roleTitle, permissions: permissions, userCount: 0 };
+  saveRoles(roles);
+  renderRoleRows();
+  populateRoleSelects();
+  this.reset();
+  alert('Role created successfully!');
+});
+
+document.getElementById('assignRoleForm').addEventListener('submit', function(event){
+  event.preventDefault();
+  const username = document.getElementById('assignRoleUser').value;
+  const roleKey = document.getElementById('assignRoleSelection').value;
+  const approved = document.getElementById('approvePermissions').checked;
+  
+  if (!username || !roleKey) {
+    alert('Please select both a user and a role.');
+    return;
+  }
+  
+  const users = getUsers();
+  const user = Object.values(users).find(u => u.username === username);
+  if (!user) return;
+  
+  // Assign role
+  const userRoles = getUserRoles();
+  userRoles[username] = { role: roleKey, approved: approved, assignedAt: new Date().toISOString() };
+  saveUserRoles(userRoles);
+  
+  // Grant permissions if approved
+  if (approved) {
+    user.permitted = true;
+    user.role = 'helper';
+  }
+  
+  saveUsers(users);
+  renderUserRows();
+  renderRoleRows();
+  populateUserSelects();
+  this.reset();
+  alert(`Role assigned to ${user.fullName || username}${approved ? ' with permissions!' : ' (pending approval)'}`);
+});
+</script>
+</body>
+</html>

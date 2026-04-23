@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seller Dashboard — Kisan Samadhan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#2E7D32;--green-light:#4CAF50;--green-pale:#E8F5E9;--green-rgb:46,125,50;--ink:#0D1B0E;--ink-2:#2C3E2D;--muted:#6B7C6D;--border:#E0EBE1;--white:#FFFFFF;--off-white:#FAFAF9;--bg:#F9F9F9;--shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 12px rgba(46,125,50,.08);--shadow-lg:0 12px 32px rgba(46,125,50,.12);--radius:12px;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);}
+.dashboard-wrapper{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--white);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto;z-index:50;}
+.sidebar-top{padding:0 24px;margin-bottom:24px;}
+.sidebar-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);margin-bottom:32px;}
+.sidebar-logo-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;}
+.sidebar-logo-text{font-weight:700;font-size:.95rem;}
+.sidebar-nav{display:flex;flex-direction:column;gap:4px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:all .2s;cursor:pointer;border-left:3px solid transparent;}
+.nav-item:hover,.nav-item.active{color:var(--green);border-left-color:var(--green);background:rgba(76,175,80,.05);}
+.nav-item-icon{font-size:1.2rem;}
+.sidebar-user{position:absolute;bottom:24px;left:24px;right:24px;padding:16px;background:var(--off-white);border-radius:10px;border:1px solid var(--border);}
+.sidebar-user-name{font-size:.85rem;font-weight:700;color:var(--ink);}
+.sidebar-user-role{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.main-content{grid-column:2;padding:32px;padding-left:40px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;}
+.top-bar-title{font-size:1.8rem;font-weight:800;color:var(--ink);}
+.top-bar-actions{display:flex;gap:12px;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-primary:hover{background:var(--green-light);transform:translateY(-1px);box-shadow:var(--shadow);}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--white);color:var(--ink);border:1.5px solid var(--border);border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .2s;}
+.stat-card:hover{border-color:var(--green);box-shadow:var(--shadow);}
+.stat-card-icon{font-size:1.8rem;margin-bottom:8px;}
+.stat-card-label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.stat-card-value{font-size:1.8rem;font-weight:800;color:var(--ink);}
+.content-grid{display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:40px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s;}
+.card:hover{border-color:var(--green);box-shadow:var(--shadow);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.card-header h2{font-size:1.2rem;font-weight:700;color:var(--ink);}
+.card-header-actions{display:flex;gap:8px;}
+.table-container{overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;}
+.table th{padding:12px 0;text-align:left;border-bottom:2px solid var(--border);font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.table td{padding:16px 0;border-bottom:1px solid var(--border);font-size:.9rem;}
+.table tbody tr:hover{background:var(--green-pale);}
+.table tbody tr:last-child td{border-bottom:none;}
+.tag{display:inline-flex;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.tag-active{background:rgba(76,175,80,.15);color:var(--green);}
+.tag-pending{background:rgba(255,193,7,.15);color:#F57F17;}
+.action-btn{padding:6px 12px;margin-left:8px;font-size:.8rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;transition:all .2s;}
+.action-btn-primary{background:var(--green);color:#fff;}
+.action-btn-primary:hover{background:var(--green-light);}
+.action-btn-secondary{background:var(--off-white);color:var(--ink);border:1px solid var(--border);}
+.action-btn-secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-pale);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit;transition:all .2s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(76,175,80,.1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-actions{display:flex;gap:12px;margin-top:20px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-state-icon{font-size:2.4rem;margin-bottom:12px;}
+.empty-state-title{font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.empty-state-text{font-size:.9rem;color:var(--muted);}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-content{background:var(--white);border-radius:12px;padding:30px;max-width:600px;width:90%;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;}
+.modal-header{font-size:1.3rem;font-weight:700;margin-bottom:20px;color:var(--ink);display:flex;justify-content:space-between;align-items:center;}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--muted);}
+.modal-close:hover{color:var(--ink);}
+.modal-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end;}
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){.dashboard-wrapper{grid-template-columns:1fr;}.sidebar{width:100%;height:auto;position:relative;border-right:none;border-bottom:1px solid var(--border);padding:16px 0;display:flex;}.sidebar-top{display:none;}.sidebar-nav{flex-direction:row;gap:0;flex-wrap:wrap;}.nav-item{padding:12px 20px;border-left:none;border-bottom:3px solid transparent;}.nav-item:hover,.nav-item.active{border-bottom-color:var(--green);border-left:none;background:transparent;}.sidebar-user{position:static;margin-top:16px;flex-basis:100%;}.main-content{grid-column:1;padding:20px;padding-left:20px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <a class="sidebar-logo" href="home.html">
+        <div class="sidebar-logo-icon">🌾</div>
+        <div class="sidebar-logo-text">KS Seller</div>
+      </a>
+    </div>
+    <div class="sidebar-nav">
+      <a class="nav-item active" onclick="navTo('dashboard')"><span class="nav-item-icon">📊</span> Dashboard</a>
+      <a class="nav-item" onclick="navTo('listings')"><span class="nav-item-icon">📦</span> My Listings</a>
+      <a class="nav-item" onclick="navTo('orders')"><span class="nav-item-icon">📋</span> Orders</a>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="userNameDisplay">User</div>
+      <div class="sidebar-user-role">Seller</div>
+      <button class="btn-secondary" style="width:100%;margin-top:12px;font-size:.8rem;padding:6px 12px;" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <h1 class="top-bar-title" id="pageTitle">Seller Dashboard</h1>
+      <div class="top-bar-actions">
+        <button class="btn-primary" id="primaryAction" style="display:none;" onclick="openCreateListingModal()">➕ New Listing</button>
+      </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboardView">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon">📦</div>
+          <div class="stat-card-label">Active Listings</div>
+          <div class="stat-card-value" id="activeListing sCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">📋</div>
+          <div class="stat-card-label">Total Orders</div>
+          <div class="stat-card-value" id="totalOrdersCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">✅</div>
+          <div class="stat-card-label">Completed</div>
+          <div class="stat-card-value" id="completedOrdersCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">⭐</div>
+          <div class="stat-card-label">Rating</div>
+          <div class="stat-card-value" id="ratingCount">4.8</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Orders</h2>
+            <div class="card-header-actions">
+              <a class="btn-secondary" onclick="navTo('orders')" style="text-decoration:none;display:inline-flex;">View All →</a>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recentOrdersBody">
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">No orders yet</div>
+                    <div class="empty-state-text">Your orders will appear here</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Quick Actions</h2>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+            <button class="btn-primary" onclick="openCreateListingModal()" style="justify-content:center;">➕ Create Listing</button>
+            <button class="btn-secondary" onclick="navTo('listings')" style="justify-content:center;">📦 View Listings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listings View -->
+    <div id="listingsView" style="display:none;">
+      <div style="margin-bottom:24px;">
+        <button class="btn-primary" onclick="openCreateListingModal()">➕ New Listing</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>My Listings</h2>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="listingsBody">
+              <tr>
+                <td colspan="5" class="empty-state">
+                  <div class="empty-state-icon">📭</div>
+                  <div class="empty-state-title">No listings yet</div>
+                  <div class="empty-state-text">Create your first listing to get started</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders View -->
+    <div id="ordersView" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>My Orders</h2>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="allOrdersBody">
+              <tr>
+                <td colspan="6" class="empty-state">
+                  <div class="empty-state-icon">📭</div>
+                  <div class="empty-state-title">No orders yet</div>
+                  <div class="empty-state-text">Your orders will appear here</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Listing Modal -->
+<div class="modal" id="listingModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span id="listingModalTitle">Create New Listing</span>
+      <button class="modal-close" onclick="closeListingModal()">&times;</button>
+    </div>
+    <form id="listingForm" onsubmit="saveListing(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="listingTitle">Product Name *</label>
+          <input id="listingTitle" type="text" required />
+        </div>
+        <div class="form-group">
+          <label for="listingCategory">Category *</label>
+          <select id="listingCategory" required>
+            <option value="">Select Category</option>
+            <option value="seeds">Seeds</option>
+            <option value="fertilizers">Fertilizers</option>
+            <option value="pesticides">Pesticides</option>
+            <option value="tools">Tools</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="listingPrice">Price (₹) *</label>
+          <input id="listingPrice" type="number" min="1" required />
+        </div>
+        <div class="form-group">
+          <label for="listingUnit">Unit *</label>
+          <input id="listingUnit" type="text" placeholder="e.g., kg, bag, liter" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="listingImage">Product Image *</label>
+        <input id="listingImage" type="file" accept="image/*" required />
+      </div>
+      <div class="form-group">
+        <label for="listingDescription">Description *</label>
+        <textarea id="listingDescription" rows="4" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeListingModal()">Cancel</button>
+        <button type="submit" class="btn-primary">Save Listing</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentUser = null;
+let currentListingId = null;
+
+function getCurrentUser(){
+  const raw = localStorage.getItem('ks_current_user');
+  return raw ? JSON.parse(raw) : null;
+}
+
+function getSellerListings(){
+  const raw = localStorage.getItem('ks_seller_listings');
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveSellerListings(listings){
+  localStorage.setItem('ks_seller_listings', JSON.stringify(listings));
+}
+
+function getSellerOrders(){
+  const raw = localStorage.getItem('ks_seller_orders');
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveSellerOrders(orders){
+  localStorage.setItem('ks_seller_orders', JSON.stringify(orders));
+}
+
+function initializeDashboard(){
+  currentUser = getCurrentUser();
+  if (!currentUser || currentUser.userType !== 'seller') {
+    alert('Access denied. Only sellers can view this page.');
+    window.location.href = 'index.html';
+    return;
+  }
+  document.getElementById('userNameDisplay').textContent = currentUser.username;
+  loadDashboardStats();
+  loadListings();
+  loadOrders();
+}
+
+function loadDashboardStats(){
+  const listings = getSellerListings();
+  const userListings = listings[currentUser.username] || [];
+  const orders = getSellerOrders();
+  const userOrders = orders[currentUser.username] || [];
+  
+  document.getElementById('activeListingsCount').textContent = userListings.filter(l => l.status === 'active').length;
+  document.getElementById('totalOrdersCount').textContent = userOrders.length;
+  document.getElementById('completedOrdersCount').textContent = userOrders.filter(o => o.status === 'completed').length;
+  
+  loadRecentOrders();
+}
+
+function loadRecentOrders(){
+  const orders = getSellerOrders();
+  const userOrders = orders[currentUser.username] || [];
+  const tbody = document.getElementById('recentOrdersBody');
+  
+  if (!userOrders.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No orders yet</div></td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = userOrders.slice(0, 5).map(order => `
+    <tr>
+      <td>#${order.id}</td>
+      <td>${order.productName}</td>
+      <td>${order.quantity}</td>
+      <td><span class="tag tag-${order.status === 'completed' ? 'active' : 'pending'}">${order.status}</span></td>
+      <td><button class="action-btn action-btn-secondary" onclick="viewOrder('${order.id}')">View</button></td>
+    </tr>
+  `).join('');
+}
+
+function loadListings(){
+  const listings = getSellerListings();
+  const userListings = listings[currentUser.username] || [];
+  const tbody = document.getElementById('listingsBody');
+  
+  if (!userListings.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No listings yet</div></td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = userListings.map(listing => `
+    <tr>
+      <td>${listing.title}</td>
+      <td>${listing.category}</td>
+      <td>₹${listing.price}/${listing.unit}</td>
+      <td><span class="tag tag-active">${listing.status}</span></td>
+      <td>
+        <button class="action-btn action-btn-primary" onclick="editListing('${listing.id}')">Edit</button>
+        <button class="action-btn action-btn-secondary" onclick="deleteListing('${listing.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function loadOrders(){
+  const orders = getSellerOrders();
+  const userOrders = orders[currentUser.username] || [];
+  const tbody = document.getElementById('allOrdersBody');
+  
+  if (!userOrders.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No orders yet</div></td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = userOrders.map(order => `
+    <tr>
+      <td>#${order.id}</td>
+      <td>${order.productName}</td>
+      <td>${order.quantity}</td>
+      <td>₹${order.amount}</td>
+      <td><span class="tag tag-${order.status === 'completed' ? 'active' : 'pending'}">${order.status}</span></td>
+      <td><button class="action-btn action-btn-secondary" onclick="viewOrder('${order.id}')">View</button></td>
+    </tr>
+  `).join('');
+}
+
+function navTo(page){
+  document.querySelectorAll('[id$="View"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  
+  const titles = { dashboard: 'Seller Dashboard', listings: 'My Listings', orders: 'My Orders' };
+  document.getElementById('pageTitle').textContent = titles[page];
+  document.getElementById('primaryAction').style.display = page === 'listings' ? 'flex' : 'none';
+  
+  if (page === 'dashboard') {
+    document.getElementById('dashboardView').style.display = 'block';
+    event.target.classList.add('active');
+  } else if (page === 'listings') {
+    document.getElementById('listingsView').style.display = 'block';
+    event.target.classList.add('active');
+  } else if (page === 'orders') {
+    document.getElementById('ordersView').style.display = 'block';
+    event.target.classList.add('active');
+  }
+}
+
+function openCreateListingModal(){
+  currentListingId = null;
+  document.getElementById('listingModalTitle').textContent = 'Create New Listing';
+  document.getElementById('listingForm').reset();
+  document.getElementById('listingModal').classList.add('open');
+}
+
+function closeListingModal(){
+  document.getElementById('listingModal').classList.remove('open');
+  document.getElementById('listingForm').reset();
+}
+
+function saveListing(event){
+  event.preventDefault();
+  
+  const title = document.getElementById('listingTitle').value.trim();
+  const category = document.getElementById('listingCategory').value;
+  const price = parseFloat(document.getElementById('listingPrice').value);
+  const unit = document.getElementById('listingUnit').value.trim();
+  const description = document.getElementById('listingDescription').value.trim();
+  const imageInput = document.getElementById('listingImage');
+  
+  const handleSave = (imageData) => {
+    const listings = getSellerListings();
+    if (!listings[currentUser.username]) {
+      listings[currentUser.username] = [];
+    }
+    
+    if (currentListingId) {
+      const idx = listings[currentUser.username].findIndex(l => l.id === currentListingId);
+      if (idx >= 0) {
+        listings[currentUser.username][idx] = { id: currentListingId, title, category, price, unit, description, image: imageData, status: 'active', createdAt: new Date().toISOString() };
+      }
+    } else {
+      listings[currentUser.username].push({
+        id: 'list_' + Date.now(),
+        title,
+        category,
+        price,
+        unit,
+        description,
+        image: imageData,
+        status: 'active',
+        createdAt: new Date().toISOString()
+      });
+    }
+    
+    saveSellerListings(listings);
+    closeListingModal();
+    loadListings();
+    loadDashboardStats();
+    alert('Listing saved successfully!');
+  };
+  
+  if (imageInput.files && imageInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      handleSave(e.target.result);
+    };
+    reader.readAsDataURL(imageInput.files[0]);
+  } else if (currentListingId) {
+    // For editing, keep existing image if no new file selected
+    const listings = getSellerListings();
+    const listing = listings[currentUser.username].find(l => l.id === currentListingId);
+    handleSave(listing ? listing.image : '');
+  } else {
+    handleSave('');
+  }
+}
+
+function editListing(id){
+  const listings = getSellerListings();
+  const listing = listings[currentUser.username].find(l => l.id === id);
+  if (!listing) return;
+  
+  currentListingId = id;
+  document.getElementById('listingModalTitle').textContent = 'Edit Listing';
+  document.getElementById('listingTitle').value = listing.title;
+  document.getElementById('listingCategory').value = listing.category;
+  document.getElementById('listingPrice').value = listing.price;
+  document.getElementById('listingUnit').value = listing.unit;
+  document.getElementById('listingDescription').value = listing.description;
+  document.getElementById('listingModal').classList.add('open');
+}
+
+function deleteListing(id){
+  if (!confirm('Are you sure you want to delete this listing?')) return;
+  
+  const listings = getSellerListings();
+  listings[currentUser.username] = listings[currentUser.username].filter(l => l.id !== id);
+  saveSellerListings(listings);
+  loadListings();
+  loadDashboardStats();
+}
+
+function viewOrder(orderId){
+  alert('Order #' + orderId + ' details');
+}
+
+// Modal Functions for Seller Dashboard
+let currentEditingProductId = null;
+
+function openListingModal(id){
+  currentListingId = null;
+  document.getElementById('listingModalTitle').textContent = 'Create New Listing';
+  document.getElementById('listingForm').reset();
+  document.getElementById('listingModal').classList.add('open');
+}
+
+function closeListingModal(){
+  document.getElementById('listingModal').classList.remove('open');
+  document.getElementById('listingForm').reset();
+  currentListingId = null;
+}
+
+function editListing(id){
+  const listings = getSellerListings();
+  const listing = listings[currentUser.username].find(l => l.id === id);
+  if (!listing) return;
+  
+  currentListingId = id;
+  document.getElementById('listingModalTitle').textContent = 'Edit Listing';
+  document.getElementById('listingTitle').value = listing.title;
+  document.getElementById('listingCategory').value = listing.category;
+  document.getElementById('listingPrice').value = listing.price;
+  document.getElementById('listingUnit').value = listing.unit;
+  document.getElementById('listingDescription').value = listing.description;
+  document.getElementById('listingModal').classList.add('open');
+}
+
+// Form submission handler - Fixed for seller dashboard
+if (document.getElementById('listingForm')) {
+  document.getElementById('listingForm').addEventListener('submit', function(event){
+    // Form is already handled by saveListing(event)
+  });
+}
+
+function logout(){
+  localStorage.removeItem('ks_current_user');
+  window.location.href = 'login.html';
+}
+
+window.addEventListener('load', initializeDashboard);
+</script>
+</body>
+</html>
